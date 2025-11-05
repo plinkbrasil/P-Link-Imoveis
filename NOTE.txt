@@ -1,0 +1,17 @@
+PATCH combinado:
+- Fotos automáticas (não precisa listar no meta.json)
+- Detecção REAL de 3D (só renderiza o iframe se existir /3d/index.html)
+- Rotas estáticas para ID e SLUG (evita 404 ao clicar no card)
+
+Como aplicar:
+1) Extraia o .zip na raiz do projeto e substitua os arquivos:
+   - lib/properties.ts
+   - app/imoveis/[id]/page.tsx
+
+2) Organize seu conteúdo assim:
+   public/content/properties/TR001/meta.json
+   public/content/properties/TR001/fotos/01.jpg (02.jpg, ...)
+   public/content/properties/TR001/3d/index.html (opcional)
+
+3) Rode o projeto:
+   npm run dev
