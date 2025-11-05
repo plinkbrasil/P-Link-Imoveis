@@ -1,0 +1,56 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+
+/* Prose defaults */
+.prose img { margin: 0; border-radius: 0.75rem; }
+
+/* Banner full-bleed: ocupa 100% da largura da viewport e preserva a proporção */
+.full-bleed {
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;            /* garante largura da viewport */
+  }
+  
+  /* Remove as margens/padding padrão do popup */
+.leaflet-popup-content-wrapper {
+  padding: 0 !important;
+  border-radius: 12px;       /* opcional, pra ficar mais card */
+}
+.leaflet-popup-content {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+.leaflet-container a.leaflet-popup-close-button {
+  top: 6px;                  /* opcional, aproxima o X do canto */
+  right: 6px;
+}
+
+/* === Estilo unificado para valores dos imóveis === */
+.price-text {
+  font-weight: 700;            /* negrito */
+  color: #065f46;              /* verde escuro (igual popup) */
+  font-size: 1rem;             /* ajuste opcional: 16px */
+}
+
+.price-text.sob-consulta {
+  color: #6b7280;              /* cinza neutro para "Sob Consulta" */
+  font-weight: 600;
+}
+
+.price-text.vendido {
+  color: #dc2626;              /* vermelho para "VENDIDO" */
+  font-weight: 700;
+}
+
+
+.price-text{font-weight:600;font-size:14px;margin-bottom:8px;}
+.price-text-lg{font-weight:600;font-size:1.5rem;line-height:2rem;}
+.price-ok{color:#065f46;}
+.price-muted{color:#065f46;}
+.price-sold{color:#dc2626;}
