@@ -324,13 +324,6 @@ await import("leaflet.markercluster");
         // camada de vértices + overlays de desenho (iguais ao .zip)
         if (!vertexLayerRef.current) vertexLayerRef.current = L.layerGroup().addTo(map);
 
-        // Ao abrir/fechar popup, apenas revalida o tamanho do mapa (sem mexer no header)
-        function onPopupLayoutChange() {
-          try { setTimeout(() => { try { map.invalidateSize(); } catch {} }, 0); } catch {}
-        }
-        map.on('popupopen', onPopupLayoutChange);
-        map.on('popupclose', onPopupLayoutChange);
-
         function refreshTempLayers(verts: Array<{ lat: number; lng: number }>) {
           // linha tracejada
           if (!tempLineRef.current) {
@@ -414,10 +407,6 @@ await import("leaflet.markercluster");
           obs.disconnect();
           rz.disconnect();
           window.removeEventListener("resize", measureZoomWidth);
-          try {
-            map.off('popupopen', onPopupLayoutChange);
-            map.off('popupclose', onPopupLayoutChange);
-          } catch {}
         };
       } catch (err) {
         console.error("Erro inicializando o mapa:", err);
