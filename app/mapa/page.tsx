@@ -47,7 +47,6 @@ export default async function MapaPage() {
   const fullBleedStyle: React.CSSProperties = {
     marginLeft: "calc(50% - 50vw)",
     marginRight: "calc(50% - 50vw)",
-    marginTop: "calc(var(--header-h, 80px) - 0rem)",
   };
 
   return (
