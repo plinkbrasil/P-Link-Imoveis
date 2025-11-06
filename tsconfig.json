@@ -45,7 +45,8 @@
     "types/**/*",
     "next-env.d.ts",
     "leaflet.markercluster",
-    "types/**/*.d.ts"
+    "types/**/*.d.ts",
+    "types/*.d.ts"
   ],
   "exclude": [
     "node_modules"

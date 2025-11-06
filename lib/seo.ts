@@ -35,6 +35,17 @@ export function buildJsonLdForProperty(p: Prop): WithContext<RealEstateListing> 
     geo,
   };
 
+  const ldJson: any = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    name: p.titulo,
+    url: `https://www.suaimobiliaria.com.br/imoveis/${p.slug || p.id}`,
+    address: p.endereco, // fica aceito porque o objeto é any
+    geo: p.geo ? { "@type": "GeoCoordinates", latitude: p.geo.lat, longitude: p.geo.lng } : undefined,
+    description: p.descricao,
+    offers: offer
+  };
+
   const offer: Offer | undefined =
     typeof p.preco === "number" && p.preco > 0
       ? {

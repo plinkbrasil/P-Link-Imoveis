@@ -75,7 +75,8 @@ export async function listProperties(): Promise<Property[]> {
 
 const relFotos: string[] = baseFotos.map((f: string) => String(f).replace(/\\/g, "/"));
 
-const fotos: string[] = relFotos.map((f: string) => `/content/properties/${id}/${f}`);
+const fotos = relFotos.map((f: string) => `/content/properties/${id}/${f}`);
+
 
     const titulo = meta.titulo || id;
     const slug = meta.slug || toSlug(titulo, id);
