@@ -19,6 +19,29 @@ type Prop = {
   moeda?: string;
 };
 
+/** Junta array de parágrafos em uma string curta e limpa */
+function normalizeDescription(desc?: string | string[]): string | undefined {
+  if (!desc) return undefined;
+  if (Array.isArray(desc)) {
+    const s = desc.join(" ").trim();
+    return s.length ? s : undefined;
+  }
+  const s = String(desc).trim();
+  return s.length ? s : undefined;
+}
+
+/** Monta o Offer somente se houver preço > 0 (ignora 0=SOB CONSULTA e -1=VENDIDO) */
+function buildOffer(p: Prop): Offer | undefined {
+  if (typeof p.preco !== "number" || p.preco <= 0) return undefined;
+  return {
+    "@type": "Offer",
+    price: p.preco,
+    priceCurrency: p.moeda || "BRL",
+    availability: "https://schema.org/InStock",
+  };
+}
+
+/** JSON-LD para página de imóvel */
 export function buildJsonLdForProperty(p: Prop): WithContext<RealEstateListing> {
   const address: PostalAddress | undefined = p.endereco
     ? { "@type": "PostalAddress", streetAddress: p.endereco }
@@ -31,39 +54,22 @@ export function buildJsonLdForProperty(p: Prop): WithContext<RealEstateListing> 
   const itemOffered: Place = {
     "@type": "Place",
     name: p.titulo,
-    address,
-    geo,
+    ...(address ? { address } : {}),
+    ...(geo ? { geo } : {}),
   };
 
-  const ldJson: any = {
+  const offer = buildOffer(p);
+  const description = normalizeDescription(p.descricao);
+
+  const jsonLd: WithContext<RealEstateListing> = {
     "@context": "https://schema.org",
     "@type": "RealEstateListing",
     name: p.titulo,
     url: `https://www.suaimobiliaria.com.br/imoveis/${p.slug || p.id}`,
-    address: p.endereco, // fica aceito porque o objeto é any
-    geo: p.geo ? { "@type": "GeoCoordinates", latitude: p.geo.lat, longitude: p.geo.lng } : undefined,
-    description: p.descricao,
-    offers: offer
-  };
-
-  const offer: Offer | undefined =
-    typeof p.preco === "number" && p.preco > 0
-      ? {
-          "@type": "Offer",
-          price: p.preco,
-          priceCurrency: p.moeda || "BRL",
-          availability: "https://schema.org/InStock",
-        }
-      : undefined;
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "RealEstateListing",
-    name: p.titulo,
-    url: `https://www.suaimobiliaria.com.br/imoveis/${p.slug || p.id}`,
-    description:
-      Array.isArray(p.descricao) ? p.descricao.join(" ") : p.descricao || undefined,
+    ...(description ? { description } : {}),
     itemOffered,
-    offers: offer,
+    ...(offer ? { offers: offer } : {}),
   };
+
+  return jsonLd;
 }
