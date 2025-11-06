@@ -213,7 +213,7 @@ export default function MapClient({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drawState.mode, drawState.verts]);
-
+  
   useEffect(() => {
     let destroyed = false;
 

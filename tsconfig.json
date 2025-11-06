@@ -42,7 +42,9 @@
     "lib/**/*",
     "leaflet",
     "types/**/*",
-    "leaflet.markercluster"
+    "next-env.d.ts",
+    "leaflet.markercluster",
+    "types/**/*.d.ts"
   ],
   "exclude": [
     "node_modules"
