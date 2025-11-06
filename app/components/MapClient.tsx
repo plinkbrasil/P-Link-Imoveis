@@ -88,7 +88,7 @@ function popupCardHTML(p: MapPoint) {
           position:absolute;
           top:18px;
           right:-40px;
-          background:#dc2626;          /* vermelho principal */
+          background:#dc2626;
           color:#fff;
           font-weight:700;
           font-size:12px;
@@ -138,7 +138,6 @@ function popupCardHTML(p: MapPoint) {
   </div>`;
 }
 
-
 /* ==== Cluster vermelho (bolha) ==== */
 function injectClusterStyles() {
   const id = "plink-cluster-styles";
@@ -159,6 +158,30 @@ function injectClusterStyles() {
   `;
   document.head.appendChild(style);
 }
+
+/* ==== Z-Index fix pra não passar por cima do header ==== */
+function injectZIndexFix() {
+  const id = "plink-leaflet-zfix";
+  if (document.getElementById(id)) return;
+  const style = document.createElement("style");
+  style.id = id;
+  style.textContent = `
+    /* isola o host do mapa e mantém baixo */
+    .plink-map { position: relative; z-index: 0; overflow: hidden; }
+
+    /* controles padrão */
+    .plink-map .leaflet-top,
+    .plink-map .leaflet-bottom { z-index: 120; }
+
+    .plink-map .leaflet-pane,
+    .plink-map .leaflet-control { z-index: 110; }
+
+    /* popups acima dos controles, mas abaixo do header */
+    .plink-map .leaflet-popup { z-index: 140; }
+  `;
+  document.head.appendChild(style);
+}
+
 function clusterIconCreate(Lany: any, cluster: any) {
   const count = cluster.getChildCount();
   const sizeClass = count < 10 ? "plink-sm" : count < 50 ? "plink-md" : "plink-lg";
@@ -169,7 +192,7 @@ function clusterIconCreate(Lany: any, cluster: any) {
   });
 }
 
-/* ===== Componente principal (baseado no seu .zip, só adicionando cluster) ===== */
+/* ===== Componente principal ===== */
 export default function MapClient({
   points,
   center,
@@ -178,7 +201,6 @@ export default function MapClient({
   style,
   fitToPoints,
   enableDraw,
-
 }: Props) {
   const outerRef = useRef<HTMLDivElement>(null);
   const mapHostRef = useRef<HTMLDivElement>(null);
@@ -220,11 +242,12 @@ export default function MapClient({
     (async () => {
       try {
         const LeafletMod: any = await import("leaflet");
-const L = LeafletMod.default ?? LeafletMod;
-(window as any).L = L;
+        const L = LeafletMod.default ?? LeafletMod;
+        (window as any).L = L;
 
-await import("leaflet.markercluster");
+        await import("leaflet.markercluster");
         injectClusterStyles();
+        injectZIndexFix(); // <-- z-index fix
 
         // cria mapa
         const map = L.map(mapHostRef.current!, {
@@ -246,16 +269,9 @@ await import("leaflet.markercluster");
           maxZoom: 19,
         }).addTo(map);
 
-        // ÍCONE PNG (public/icons/pin.png e pin@2x.png)
+        // ÍCONE condicional (vendido)
         const ICON_W = 36;
         const ICON_H = 36;
-        const propertyIcon = L.icon({
-          iconUrl: "/icons/pin.png",
-          iconRetinaUrl: "/icons/pin@2x.png",
-          iconSize: [ICON_W, ICON_H],
-          iconAnchor: [Math.round(ICON_W / 2), ICON_H], // ponta inferior
-          popupAnchor: [0, -ICON_H],
-        });
 
         // === CLUSTER vermelho ===
         const clusterGroup = (L as any).markerClusterGroup({
@@ -263,7 +279,7 @@ await import("leaflet.markercluster");
           zoomToBoundsOnClick: true,
           spiderfyOnMaxZoom: true,
           removeOutsideVisibleBounds: true,
-          maxClusterRadius:50,
+          maxClusterRadius: 50,
           iconCreateFunction: (cluster: any) => clusterIconCreate(L, cluster),
         });
         clusterGroupRef.current = clusterGroup;
@@ -274,23 +290,20 @@ await import("leaflet.markercluster");
         for (const p of points) {
           const ll = L.latLng(p.geo.lat, p.geo.lng);
           bounds.extend(ll);
-        
-          // Ícone condicional: se o imóvel estiver vendido (preco === -1), muda o ícone
+
           const isVendido = p.preco === -1 || p.preco === "-1";
           const icon = L.icon({
             iconUrl: isVendido ? "/icons/pin-vendido.png" : "/icons/pin.png",
             iconRetinaUrl: isVendido ? "/icons/pin-vendido@2x.png" : "/icons/pin@2x.png",
-            iconSize: [36, 36],
-            iconAnchor: [18, 36],
-            popupAnchor: [0, -36],
+            iconSize: [ICON_W, ICON_H],
+            iconAnchor: [Math.round(ICON_W / 2), ICON_H],
+            popupAnchor: [0, -ICON_H],
           });
-        
+
           const marker = L.marker(ll, { icon });
           marker.bindPopup(popupCardHTML(p), { maxWidth: 320, className: "leaflet-popup--card" });
-        
           clusterGroup.addLayer(marker);
         }
-        
 
         const shouldFit = fitToPoints ?? points.length !== 1;
         if (shouldFit && clusterGroup.getBounds?.().isValid()) {
@@ -303,7 +316,7 @@ await import("leaflet.markercluster");
           map.fitBounds(bounds.pad(0.2));
         }
 
-        // medir largura do zoom para posicionar a toolbar ao lado
+        // medir largura do zoom para posicionar a toolbar
         function measureZoomWidth() {
           try {
             const host = outerRef.current as HTMLElement | null;
@@ -321,7 +334,7 @@ await import("leaflet.markercluster");
         if (zoomEl) rz.observe(zoomEl);
         window.addEventListener("resize", measureZoomWidth);
 
-        // camada de vértices + overlays de desenho (iguais ao .zip)
+        // camada de vértices + overlays de desenho
         if (!vertexLayerRef.current) vertexLayerRef.current = L.layerGroup().addTo(map);
 
         function refreshTempLayers(verts: Array<{ lat: number; lng: number }>) {
@@ -335,7 +348,7 @@ await import("leaflet.markercluster");
           }
           tempLineRef.current.setLatLngs(verts.map((v) => L.latLng(v.lat, v.lng)));
 
-          // polígono translucido
+          // polígono
           if (verts.length >= 3) {
             if (!tempPolyRef.current) {
               tempPolyRef.current = L.polygon([], {
@@ -352,7 +365,7 @@ await import("leaflet.markercluster");
             }
           }
 
-          // vértices como pequenos círculos
+          // vértices
           vertexLayerRef.current.clearLayers();
           verts.forEach((v) => {
             L.circleMarker([v.lat, v.lng], {
@@ -400,7 +413,6 @@ await import("leaflet.markercluster");
           try {
             map && map.remove();
             mapRef.current = null;
-            // limpa id interno pro Leaflet poder re-inicializar no mesmo DIV
             const el: any = mapHostRef.current;
             if (el && el._leaflet_id) el._leaflet_id = undefined;
           } catch {}
@@ -439,12 +451,17 @@ await import("leaflet.markercluster");
   }
 
   return (
-    <div ref={outerRef} className={className} style={{ position: "relative", ...(style || {}) }}>
-      <div ref={mapHostRef} className="w-full h-full" />
+    <div
+      ref={outerRef}
+      className={`${className || ""} relative z-0 overflow-hidden`} // <- isola o mapa
+      style={{ ...(style || {}) }}
+    >
+      {/* host do Leaflet com classe escopo */}
+      <div ref={mapHostRef} className="w-full h-full plink-map" />
 
       {(enableDraw ?? points.length > 1) && (
         <div
-          className="absolute top-2 z-[2000] flex flex-wrap gap-2 bg-white/90 backdrop-blur rounded-xl border p-2 shadow"
+          className="absolute top-2 z-[150] flex flex-wrap gap-2 bg-white/90 backdrop-blur rounded-xl border p-2 shadow"
           style={{ left: "calc(var(--leaflet-zoom-w, 0px) + 12px)" }}
         >
           {drawState.mode === "idle" && (
