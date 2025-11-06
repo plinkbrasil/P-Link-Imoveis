@@ -50,7 +50,9 @@ export default async function MapaPage() {
   };
 
   return (
-    <div className="mt-[var(--header-h,80px)] md:mt-0" style={fullBleedStyle}>
+    <div style={fullBleedStyle}>
+      {/* Spacer que imita a altura dinâmica do header */}
+      <div style={{ height: "var(--header-h, 80px)" }} />
       <MapClient
         points={pts}
         className="w-screen"
