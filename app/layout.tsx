@@ -61,29 +61,40 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
             {/* LOGO com hover scale */}
             <a
-              href="/"
-              className="justify-self-center flex items-center transition-transform duration-300 hover:scale-105 active:scale-100"
-              aria-label="P-Link Imóveis"
-              title="P-Link Imóveis"
-            >
-              <img
-                src="/logo.svg"
-                alt="P-Link Imóveis"
-                className="h-16 w-auto select-none"
-                draggable={false}
-              />
-            </a>
+  href="/"
+  aria-label="P-Link Imóveis"
+  title="P-Link Imóveis"
+  className="
+    flex items-center
+    flex-shrink-0 min-w-0
+    transition-transform duration-300 hover:scale-105 active:scale-100
+  "
+>
+  <img
+    src="/logo.svg"
+    alt="P-Link Imóveis"
+    draggable={false}
+    className="
+      block
+      h-10 sm:h-12 md:h-16
+      w-auto
+      max-w-[60vw] sm:max-w-none
+      object-contain
+      select-none
+    "
+  />
+</a>
 
             <div className="justify-self-end flex items-center gap-2 sm:gap-3">
               <HeaderSearch items={items} />
               <a
-  href="https://www.instagram.com/paulo.stephens"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="border border-white/30 rounded-full px-2.5 py-1 text-white hover:bg-white/10 flex items-center justify-center"
-  aria-label="Instagram"
-  title="Instagram"
->
+    href="https://www.instagram.com/paulo.stephens"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 border border-white/30 rounded-full text-white hover:bg-white/10 transition"
+    aria-label="Instagram"
+    title="Instagram"
+  >
   <FaInstagram className="w-4 h-4 sm:w-5 sm:h-5" />
 </a>
             </div>
