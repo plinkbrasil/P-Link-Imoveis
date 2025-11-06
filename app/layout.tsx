@@ -56,7 +56,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <nav className="justify-self-start flex gap-4 sm:gap-6 text-xs sm:text-sm font-semibold uppercase tracking-wide">
               <a href="/" className="text-white hover:text-white/90">Home</a>
               <a href="/mapa" className="text-white hover:text-white/90">Mapa</a>
-              <a href="/contato" className="text-white hover:text-white/90">Contato</a>
             </nav>
 
             {/* LOGO com hover scale */}
