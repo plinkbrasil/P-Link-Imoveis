@@ -69,9 +69,13 @@ export async function listProperties(): Promise<Property[]> {
       ["*.{jpg,jpeg,png,webp,avif}", "fotos/**/*.{jpg,jpeg,png,webp,avif}"],
       { cwd: dir, caseSensitiveMatch: false }
     );
-    const relFotos = (Array.isArray(meta.fotos) && meta.fotos.length ? meta.fotos : found)
-      .map((f: string) => f.replace(/\\/g, "/"));
-    const fotos = relFotos.map((f) => `/content/properties/${id}/${f}`);
+    const baseFotos: string[] = Array.isArray(meta.fotos) && meta.fotos.length
+  ? meta.fotos as string[]
+  : (found as string[]);
+
+const relFotos: string[] = baseFotos.map((f: string) => String(f).replace(/\\/g, "/"));
+
+const fotos: string[] = relFotos.map((f: string) => `/content/properties/${id}/${f}`);
 
     const titulo = meta.titulo || id;
     const slug = meta.slug || toSlug(titulo, id);
