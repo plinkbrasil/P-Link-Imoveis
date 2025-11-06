@@ -64,24 +64,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   href="/"
   aria-label="P-Link Imóveis"
   title="P-Link Imóveis"
-  className="
-    flex items-center
-    flex-shrink-0 min-w-0
-    transition-transform duration-300 hover:scale-105 active:scale-100
-  "
+  className="flex items-center justify-center"
+  style={{ lineHeight: 0 }} // remove espaçamento extra vertical
 >
   <img
     src="/logo.svg"
     alt="P-Link Imóveis"
+    className="h-10 sm:h-12 md:h-16 w-auto object-contain select-none"
     draggable={false}
-    className="
-      block
-      h-10 sm:h-12 md:h-16
-      w-auto
-      max-w-[60vw] sm:max-w-none
-      object-contain
-      select-none
-    "
   />
 </a>
 
