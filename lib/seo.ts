@@ -3,7 +3,6 @@ import type {
   WithContext,
   RealEstateListing,
   Offer,
-  Place,
   PostalAddress,
   GeoCoordinates,
 } from "schema-dts";
@@ -19,7 +18,7 @@ type Prop = {
   moeda?: string;
 };
 
-/** Junta array de parágrafos em uma string curta e limpa */
+/** Junta array de parágrafos em uma string única e limpa */
 function normalizeDescription(desc?: string | string[]): string | undefined {
   if (!desc) return undefined;
   if (Array.isArray(desc)) {
@@ -30,7 +29,7 @@ function normalizeDescription(desc?: string | string[]): string | undefined {
   return s.length ? s : undefined;
 }
 
-/** Monta o Offer somente se houver preço > 0 (ignora 0=SOB CONSULTA e -1=VENDIDO) */
+/** Emite Offer apenas se preço > 0 (evita 0 = SOB CONSULTA, -1 = VENDIDO) */
 function buildOffer(p: Prop): Offer | undefined {
   if (typeof p.preco !== "number" || p.preco <= 0) return undefined;
   return {
@@ -41,7 +40,7 @@ function buildOffer(p: Prop): Offer | undefined {
   };
 }
 
-/** JSON-LD para página de imóvel */
+/** JSON-LD para a página de imóvel */
 export function buildJsonLdForProperty(p: Prop): WithContext<RealEstateListing> {
   const address: PostalAddress | undefined = p.endereco
     ? { "@type": "PostalAddress", streetAddress: p.endereco }
@@ -51,25 +50,24 @@ export function buildJsonLdForProperty(p: Prop): WithContext<RealEstateListing> 
     ? { "@type": "GeoCoordinates", latitude: p.geo.lat, longitude: p.geo.lng }
     : undefined;
 
-  const itemOffered: Place = {
-    "@type": "Place",
-    name: p.titulo,
-    ...(address ? { address } : {}),
-    ...(geo ? { geo } : {}),
-  };
-
   const offer = buildOffer(p);
   const description = normalizeDescription(p.descricao);
 
-  const jsonLd: WithContext<RealEstateListing> = {
+  // Montamos o objeto com as propriedades desejadas…
+  const jsonLd = {
     "@context": "https://schema.org",
     "@type": "RealEstateListing",
     name: p.titulo,
     url: `https://www.suaimobiliaria.com.br/imoveis/${p.slug || p.id}`,
     ...(description ? { description } : {}),
-    itemOffered,
+    itemOffered: {
+      "@type": "Place",
+      name: p.titulo,
+      ...(address ? { address } : {}),
+      ...(geo ? { geo } : {}),
+    },
     ...(offer ? { offers: offer } : {}),
-  };
+  } as WithContext<RealEstateListing>; // …e afirmamos o tipo aqui para satisfazer o TS.
 
   return jsonLd;
 }
