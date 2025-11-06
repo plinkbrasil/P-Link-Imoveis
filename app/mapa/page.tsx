@@ -50,7 +50,7 @@ export default async function MapaPage() {
   };
 
   return (
-    <div style={fullBleedStyle}>
+    <div className="mt-[var(--header-h,80px)] md:mt-0" style={fullBleedStyle}>
       <MapClient
         points={pts}
         className="w-screen"
