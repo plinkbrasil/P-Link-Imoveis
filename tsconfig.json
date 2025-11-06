@@ -38,7 +38,9 @@
     "tailwind.config.js",
     "app/**/*",
     "lib/**/*",
-    "types/**/*"
+    "leaflet",
+    "types/**/*",
+    "leaflet.markercluster"
   ],
   "exclude": [
     "node_modules"

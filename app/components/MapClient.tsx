@@ -223,7 +223,7 @@ export default function MapClient({
         const L = LeafletMod.default ?? LeafletMod;
         (window as any).L = L;
 
-        await import("leaflet.markercluster/dist/leaflet.markercluster.js");
+        await import("leaflet.markercluster");
         injectClusterStyles();
 
         // cria mapa
