@@ -1,12 +1,12 @@
 // -*- app/layout.tsx -*-
 import "./globals.css";
-import { FaInstagram } from "react-icons/fa";
 import "leaflet/dist/leaflet.css";
 import type { Metadata } from "next";
 import HeaderSearch from "@/app/components/HeaderSearch";
 import HeaderSizer from "@/app/components/HeaderSizer";
 import WhatsAppFloat from "@/app/components/WhatsAppFloat";
 import { listProperties } from "@/lib/properties";
+import { FaInstagram } from "react-icons/fa";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.p-linkimoveis.com.br"),
@@ -74,7 +74,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               />
             </a>
 
-            <a
+            <div className="justify-self-end flex items-center gap-2 sm:gap-3">
+              <HeaderSearch items={items} />
+              <a
   href="https://www.instagram.com/paulo.stephens"
   target="_blank"
   rel="noopener noreferrer"
@@ -84,6 +86,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 >
   <FaInstagram className="w-4 h-4 sm:w-5 sm:h-5" />
 </a>
+            </div>
           </div>
         </header>
 
