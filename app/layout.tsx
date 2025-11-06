@@ -1,5 +1,6 @@
 // -*- app/layout.tsx -*-
 import "./globals.css";
+import { FaInstagram } from "react-icons/fa";
 import "leaflet/dist/leaflet.css";
 import type { Metadata } from "next";
 import HeaderSearch from "@/app/components/HeaderSearch";
@@ -73,19 +74,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               />
             </a>
 
-            <div className="justify-self-end flex items-center gap-2 sm:gap-3">
-              <HeaderSearch items={items} />
-              <a
-                href="https://www.instagram.com/paulo.stephens"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="uppercase text-xs sm:text-sm font-semibold border border-white/30 rounded-full px-3 py-1 text-white hover:bg-white/10"
-                aria-label="Instagram"
-                title="Instagram"
-              >
-                Instagram
-              </a>
-            </div>
+            <a
+  href="https://www.instagram.com/paulo.stephens"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="border border-white/30 rounded-full px-2.5 py-1 text-white hover:bg-white/10 flex items-center justify-center"
+  aria-label="Instagram"
+  title="Instagram"
+>
+  <FaInstagram className="w-4 h-4 sm:w-5 sm:h-5" />
+</a>
           </div>
         </header>
 
