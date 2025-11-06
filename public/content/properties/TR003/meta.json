@@ -5,8 +5,8 @@
   "tipo": "Terreno",
   "endereco": "Campo Largo da Roseira, Fazenda Rio Grande, PR",
   "geo": {
-    "lat": -25.665121,
-    "lng": -49.185369
+    "lat": "-25.665121",
+    "lng": "-49.185369"
   },
   "area_m2": 1046650,
   "preco": -1,
