@@ -324,19 +324,12 @@ await import("leaflet.markercluster");
         // camada de vértices + overlays de desenho (iguais ao .zip)
         if (!vertexLayerRef.current) vertexLayerRef.current = L.layerGroup().addTo(map);
 
-        // Recalcular a altura do header e garantir o offset após eventos de popup
-        function refreshHeaderOffset() {
-          try {
-            const headerEl = document.querySelector('header') as HTMLElement | null;
-            const h = headerEl ? Math.round(headerEl.getBoundingClientRect().height) : 64;
-            document.documentElement.style.setProperty('--header-h', h + 'px');
-            window.dispatchEvent(new Event('pl-header-resize'));
-            // Revalida o tamanho do mapa após o layout
-            setTimeout(() => { try { map.invalidateSize(); } catch {} }, 0);
-          } catch {}
+        // Ao abrir/fechar popup, apenas revalida o tamanho do mapa (sem mexer no header)
+        function onPopupLayoutChange() {
+          try { setTimeout(() => { try { map.invalidateSize(); } catch {} }, 0); } catch {}
         }
-        map.on('popupopen', refreshHeaderOffset);
-        map.on('popupclose', refreshHeaderOffset);
+        map.on('popupopen', onPopupLayoutChange);
+        map.on('popupclose', onPopupLayoutChange);
 
         function refreshTempLayers(verts: Array<{ lat: number; lng: number }>) {
           // linha tracejada
@@ -422,8 +415,8 @@ await import("leaflet.markercluster");
           rz.disconnect();
           window.removeEventListener("resize", measureZoomWidth);
           try {
-            map.off('popupopen', refreshHeaderOffset);
-            map.off('popupclose', refreshHeaderOffset);
+            map.off('popupopen', onPopupLayoutChange);
+            map.off('popupclose', onPopupLayoutChange);
           } catch {}
         };
       } catch (err) {
