@@ -220,10 +220,10 @@ export default function MapClient({
     (async () => {
       try {
         const LeafletMod: any = await import("leaflet");
-        const L = LeafletMod.default ?? LeafletMod;
-        (window as any).L = L;
+const L = LeafletMod.default ?? LeafletMod;
+(window as any).L = L;
 
-        await import("leaflet.markercluster");
+await import("leaflet.markercluster");
         injectClusterStyles();
 
         // cria mapa
