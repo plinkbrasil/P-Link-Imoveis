@@ -25,6 +25,14 @@
   padding: 0 !important;
 }
 
+@media (max-width: 640px) {
+  input, select, textarea, button {
+    font-size: 16px !important;
+  }
+}
+
+html { -webkit-text-size-adjust: 100%; }
+
 
 .leaflet-container a.leaflet-popup-close-button {
   top: 6px;                  /* opcional, aproxima o X do canto */
