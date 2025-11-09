@@ -251,15 +251,14 @@ export default function MapClient({
         // Garantir que o mapa nunca passe por cima do header
         (mapHostRef.current as HTMLElement).style.zIndex = "0";
 
-        L.tileLayer("https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png", {
-          // subdomínios do servidor do CyclOSM (OpenStreetMap France)
-          subdomains: ["a", "b", "c"],
+        L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
           maxZoom: 20,
           attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
-            'contributors | Tiles: <a href="https://www.cyclosm.org/">CyclOSM</a> ' +
-            '(<a href="https://www.openstreetmap.fr/">OSM France</a>)'
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors ' +
+            '&copy; <a href="https://carto.com/attributions">CARTO</a>',
         }).addTo(map);
+        
+        
 
         const clusterGroup = (L as any).markerClusterGroup({
           showCoverageOnHover: false,
@@ -308,6 +307,9 @@ export default function MapClient({
           if (!topPane) return;
           topPane.style.top = "0px"; // Nenhum espaço acima
         }
+
+        const topPane = mapHostRef.current?.querySelector(".leaflet-top") as HTMLElement | null;
+if (topPane) topPane.style.top = "0px"; // ou "0px" se quiser colado
         
         offsetControlsBelowHeader();
         const ro = new ResizeObserver(offsetControlsBelowHeader);
