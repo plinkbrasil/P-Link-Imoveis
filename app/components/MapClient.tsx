@@ -87,7 +87,7 @@ function popupCardHTML(p: MapPoint) {
             ? `
         <span style="
           position:absolute; top:20px; right:-40px;
-          background:#dc2626; color:#fff; font-weight:700; font-size:12px;
+          background:#dc2626; color:#fff; font-weight:700; font-size:16px;
           padding:6px 50px; transform:rotate(45deg);
           box-shadow:0 2px 6px rgba(0,0,0,.25); letter-spacing:.05em;
         ">VENDIDO</span>`
