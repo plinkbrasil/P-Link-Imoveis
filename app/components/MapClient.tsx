@@ -300,16 +300,11 @@ export default function MapClient({
 
         /* ===== offset de controles abaixo do header ===== */
         function offsetControlsBelowHeader() {
-          try {
-            const header =
-              (document.querySelector("header") as HTMLElement | null) ||
-              (document.querySelector("[data-site-header]") as HTMLElement | null);
-            const topPane = mapHostRef.current?.querySelector(".leaflet-top") as HTMLElement | null;
-            if (!topPane) return;
-            const h = header ? Math.ceil(header.getBoundingClientRect().height) : 0;
-            topPane.style.top = `${Math.max(8, h + 8)}px`; // respiro de 8px
-          } catch {}
+          const topPane = mapHostRef.current?.querySelector(".leaflet-top") as HTMLElement | null;
+          if (!topPane) return;
+          topPane.style.top = "0px"; // Nenhum espaço acima
         }
+        
         offsetControlsBelowHeader();
         const ro = new ResizeObserver(offsetControlsBelowHeader);
         if (document.body) ro.observe(document.body);
