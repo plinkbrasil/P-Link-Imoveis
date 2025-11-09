@@ -56,7 +56,7 @@ export default async function MapaPage() {
       <MapClient
         points={pts}
         className="w-screen"
-        style={{ height: "calc(100vh - var(--header-h, 80px))", minHeight: 420 }}
+        style={{ height: "calc(100vh - var(--header-h, 0px))", minHeight: 420 }}
         enableDraw={true}   // garante a barra de desenho (polígono)
         fitToPoints         // enquadra todos os pontos
       />
