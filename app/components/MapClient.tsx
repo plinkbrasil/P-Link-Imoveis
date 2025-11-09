@@ -478,7 +478,7 @@ if (topPane) topPane.style.top = "0px"; // ou "0px" se quiser colado
         <div
         className="absolute z-[2000] flex flex-wrap gap-2 bg-white/90 backdrop-blur rounded-xl border p-2 shadow"
         style={{ 
-          top: "calc(var(--leaflet-zoom-top, 8px))",
+          top: "calc(var(--leaflet-zoom-top, 0px))",
           left: "calc(var(--leaflet-zoom-w, 40px) + 16px)" // deixa ao lado do zoom
         }}
       >
