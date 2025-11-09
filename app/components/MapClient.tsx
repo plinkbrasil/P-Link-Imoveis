@@ -431,43 +431,6 @@ if (topPane) topPane.style.top = "0px"; // ou "0px" se quiser colado
     };
   }, [drawState.mode, drawState.verts]);
 
-  const onPopupOpen = (e: any) => {
-    try {
-      lockScroll();
-  
-      const map = mapRef.current;
-      if (!map) return;
-  
-      // LatLng do popup (centro do marcador)
-      const latlng = e?.popup?.getLatLng?.() ?? null;
-      if (!latlng) return;
-  
-      // Posição atual do marcador no container (px)
-      const cur = map.latLngToContainerPoint(latlng);
-  
-      // Tamanho atual do mapa
-      const size = map.getSize();
-  
-      // (Opcional) descontar parte do header, se quiser:
-      // const header = document.querySelector("header") as HTMLElement | null;
-      // const headerH = header ? header.getBoundingClientRect().height : 0;
-  
-      // Alvo: meio na horizontal, 4/5 da altura na vertical
-      // Obs: se quiser “subir” um pouco, subtraia parte do headerH
-      const target = (window as any).L.point(size.x / 2, size.y * 0.8 /* - headerH * 0.3 */);
-  
-      // Delta para pan
-      const delta = target.subtract(cur);
-  
-      // Pan suave para posicionar o popup
-      map.panBy(delta, { animate: true, duration: 0.35, easeLinearity: 0.25 });
-    } catch {}
-  };
-  
-  const onPopupClose = () => {
-    try { unlockScroll(); } catch {}
-  };
-
   /* ===== ações toolbar ===== */
   function startDraw() {
     setDrawState({ mode: "drawing", verts: [] });
