@@ -50,7 +50,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }} />
 
-        <header className="sticky top-0 z-[5000] bg-gradient-to-r from-[#0c0f14]/90 to-[#0a454f]/90 backdrop-blur-sm">
+        <header className="sticky top-0 z-[2000] bg-gradient-to-r from-[#0c0f14]/90 to-[#0a454f]/90 backdrop-blur-sm">
 
           <HeaderSizer />
           <div className="mx-auto max-w-6xl px-4 py-3 grid grid-cols-3 items-center">

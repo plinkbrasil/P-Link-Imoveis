@@ -25,16 +25,14 @@ type Props = {
   className?: string;
   style?: React.CSSProperties;
   fitToPoints?: boolean;
-  enableDraw?: boolean; // habilita desenho de polígono
+  enableDraw?: boolean;
 };
 
 /* ===== Helpers ===== */
 function coerceNumAny(x: any): number | undefined {
   if (typeof x === "number" && Number.isFinite(x)) return x;
   if (typeof x === "string") {
-    const n = Number(
-      x.trim().replace(/\./g, "").replace(",", ".").replace(/[^0-9.\-]/g, "")
-    );
+    const n = Number(x.trim().replace(/\./g, "").replace(",", ".").replace(/[^0-9.\-]/g, ""));
     return Number.isFinite(n) ? n : undefined;
   }
   return undefined;
@@ -58,10 +56,7 @@ function fmtBRL(n?: number | null): string | null {
   if (n === 0) return "SOB CONSULTA";
   if (n === -1) return "VENDIDO";
   try {
-    return n.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
+    return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   } catch {
     return String(n);
   }
@@ -70,15 +65,10 @@ function fmtBRL(n?: number | null): string | null {
 /* ===== Popup Card HTML ===== */
 function popupCardHTML(p: MapPoint) {
   const first = p.fotos?.[0] || "1.jpg";
-  const foto = first.startsWith("/")
-    ? first
-    : `/content/properties/${p.id}/fotos/${first}`;
+  const foto = first.startsWith("/") ? first : `/content/properties/${p.id}/fotos/${first}`;
 
   const areaNum = readArea(p);
-  const areaStr =
-    typeof areaNum === "number"
-      ? `${areaNum.toLocaleString("pt-BR")} m²`
-      : "";
+  const areaStr = typeof areaNum === "number" ? `${areaNum.toLocaleString("pt-BR")} m²` : "";
 
   const precoNum = readPrice(p);
   const precoStr = fmtBRL(precoNum);
@@ -86,84 +76,59 @@ function popupCardHTML(p: MapPoint) {
   const compNum = coerceNumAny((p as any)?.valor_comparativo);
   const compStr = compNum && compNum > 0 ? fmtBRL(compNum) : null;
   const hasDiscount =
-    typeof precoNum === "number" &&
-    typeof compNum === "number" &&
-    compNum > precoNum;
+    typeof precoNum === "number" && typeof compNum === "number" && compNum > precoNum;
 
   return `
     <div style="width:280px; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden; background:#fff;">
       <div style="position:relative; aspect-ratio:16/9; background:#f4f4f5;">
-        <img src="${foto}" alt="${p.titulo || p.id}" style="width:100%; height:100%; object-fit:cover;" />
-
+        <img src="${foto}" alt="${p.titulo || p.id}" style="width:100%; height:100%; object-fit:cover; display:block;" />
         ${
           precoNum === -1
             ? `
-          <span style="
-            position:absolute;
-            top:18px;
-            right:-40px;
-            background:#dc2626;
-            color:#fff;
-            font-weight:700;
-            font-size:12px;
-            padding:6px 50px;
-            transform:rotate(45deg);
-            box-shadow:0 2px 6px rgba(0,0,0,.25);
-            letter-spacing:.05em;
-          ">VENDIDO</span>
-        `
+        <span style="
+          position:absolute; top:18px; right:-40px;
+          background:#dc2626; color:#fff; font-weight:700; font-size:12px;
+          padding:6px 50px; transform:rotate(45deg);
+          box-shadow:0 2px 6px rgba(0,0,0,.25); letter-spacing:.05em;
+        ">VENDIDO</span>`
             : ""
         }
-
         ${
           hasDiscount
             ? `
-          <span style="
-            position:absolute;
-            top:8px; left:8px;
-            background:#e11d48;
-            color:#fff;
-            font-size:12px;
-            padding:2px 8px;
-            border-radius:6px;
-          ">Preço baixou</span>`
+        <span style="
+          position:absolute; top:8px; left:8px;
+          background:#e11d48; color:#fff; font-size:12px;
+          padding:2px 8px; border-radius:6px;
+        ">Preço baixou</span>`
             : ""
         }
       </div>
+
       <div style="padding:12px;">
-        <div style="font-size:11px; color:#6b7280; margin-bottom:4px;">
-          Cód: ${p.id}
-        </div>
-        <div style="font-weight:600; margin-bottom:4px;">
-          ${p.titulo || "Imóvel"}
-        </div>
-        ${p.endereco ? `<div style="font-size:12px; color:#4b5563;">${p.endereco}</div>` : ""}
-        ${
-          areaStr
-            ? `<div style="font-size:12px; color:#4b5563;">${areaStr}</div>`
-            : ""
-        }
+        <div style="font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:#6b7280; margin-bottom:4px;">Cód: ${p.id}</div>
+        <div style="font-weight:600; line-height:1.25; margin-bottom:4px;">${p.titulo || "Imóvel"}</div>
+        ${p.endereco ? `<div style="font-size:12px; color:#4b5563; margin-bottom:4px;">${p.endereco}</div>` : ""}
+        ${areaStr ? `<div style="font-size:12px; color:#4b5563; margin-bottom:6px;">${areaStr}</div>` : ""}
         ${
           compStr && hasDiscount
-            ? `<div style="font-size:12px; color:#9ca3af; text-decoration:line-through;">${compStr}</div>`
+            ? `<div style="font-size:12px; color:#9ca3af; text-decoration:line-through; margin-bottom:2px;">${compStr}</div>`
             : ""
         }
         ${
           precoStr
             ? `
-          <div style="font-size:14px; font-weight:600; color:${
-            precoStr === "VENDIDO" ? "#dc2626" : "#065f46"
-          };">
-            ${precoStr}
-          </div>`
+        <div style="
+          font-size:14px; font-weight:600; margin-bottom:8px;
+          color:${precoStr === "VENDIDO" ? "#dc2626" : "#065f46"};
+        ">${precoStr}</div>`
             : ""
         }
-        <a href="/imoveis/${p.slug || p.id}" style="display:inline-block; padding:8px 10px; background:#0a454f; color:#fff; border-radius:8px; font-size:12px; text-decoration:none;">
-          Ver anúncio
-        </a>
+        <a href="/imoveis/${p.slug || p.id}" style="display:inline-block; padding:8px 10px; background:#0a454f; color:#fff; border-radius:8px; font-size:12px; text-decoration:none;">Ver anúncio</a>
       </div>
     </div>`;
 }
+
 /* ==== Cluster vermelho (bolha) ==== */
 function injectClusterStyles() {
   const id = "plink-cluster-styles";
@@ -175,8 +140,7 @@ function injectClusterStyles() {
     .marker-cluster .plink-bubble {
       display:flex; align-items:center; justify-content:center;
       width: 42px; height: 42px; border-radius: 9999px;
-      background: #e11d48; /* vermelho */
-      color: #fff; font-weight:700; font-size:13px;
+      background: #e11d48; color: #fff; font-weight:700; font-size:13px;
       box-shadow: 0 6px 16px rgba(0,0,0,.25), inset 0 0 0 2px rgba(255,255,255,.06);
     }
     .marker-cluster.plink-md .plink-bubble { width: 48px; height: 48px; }
@@ -194,6 +158,15 @@ function clusterIconCreate(Lany: any, cluster: any) {
   });
 }
 
+/* ===== Scroll lock robusto (reentrante) ===== */
+const SCROLL_CLASS = "no-scroll";
+function hardResetScrollLocks() {
+  document.body.style.overflow = "";
+  document.documentElement.style.overflow = "";
+  document.body.classList.remove(SCROLL_CLASS, "leaflet-popup-open");
+  document.documentElement.classList.remove(SCROLL_CLASS, "leaflet-popup-open");
+}
+
 /* ===== Componente principal ===== */
 export default function MapClient({
   points,
@@ -207,11 +180,10 @@ export default function MapClient({
   const outerRef = useRef<HTMLDivElement>(null);
   const mapHostRef = useRef<HTMLDivElement>(null);
 
-  // refs Leaflet / layers
   const mapRef = useRef<any>(null);
   const clusterGroupRef = useRef<any>(null);
 
-  // overlays do modo desenho (parte 3 usa)
+  // desenho
   const tempLineRef = useRef<any>(null);
   const tempPolyRef = useRef<any>(null);
   const vertexLayerRef = useRef<any>(null);
@@ -221,53 +193,38 @@ export default function MapClient({
     verts: Array<{ lat: number; lng: number }>;
   }>({ mode: "idle", verts: [] });
 
-  /* ===== Scroll Lock (quando popup abre) ===== */
-  const originalOverflowRef = useRef<string | null>(null);
-  const originalTouchActionRef = useRef<string | null>(null);
+  // scroll lock state
+  const lockCountRef = useRef(0);
+  const prevScrollRef = useRef<number | null>(null);
 
   function lockScroll() {
-    try {
-      const body = document.body;
-      if (originalOverflowRef.current === null) {
-        originalOverflowRef.current = body.style.overflow || "";
-      }
-      if (originalTouchActionRef.current === null) {
-        originalTouchActionRef.current = body.style.touchAction || "";
-      }
-      body.style.overflow = "hidden";
-      body.style.touchAction = "none"; // ajuda no mobile
-    } catch {}
+    if (lockCountRef.current === 0) {
+      prevScrollRef.current = window.scrollY;
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+      document.body.classList.add(SCROLL_CLASS, "leaflet-popup-open");
+      document.documentElement.classList.add(SCROLL_CLASS, "leaflet-popup-open");
+    }
+    lockCountRef.current++;
   }
   function unlockScroll() {
-    try {
-      const body = document.body;
-      if (originalOverflowRef.current !== null) {
-        body.style.overflow = originalOverflowRef.current;
+    if (lockCountRef.current > 0) lockCountRef.current--;
+    if (lockCountRef.current === 0) {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+      document.body.classList.remove(SCROLL_CLASS, "leaflet-popup-open");
+      document.documentElement.classList.remove(SCROLL_CLASS, "leaflet-popup-open");
+      if (prevScrollRef.current != null) {
+        window.scrollTo({ top: prevScrollRef.current });
+        prevScrollRef.current = null;
       }
-      if (originalTouchActionRef.current !== null) {
-        body.style.touchAction = originalTouchActionRef.current;
-      }
-      originalOverflowRef.current = null;
-      originalTouchActionRef.current = null;
-    } catch {}
+    }
   }
 
-  // limpa/atualiza overlays ao mudar estado de desenho (detalhes na parte 3)
-  useEffect(() => {
-    if (drawState.mode === "idle") {
-      try {
-        const map = mapRef.current;
-        if (!map) return;
-        if (tempLineRef.current) { map.removeLayer(tempLineRef.current); tempLineRef.current = null; }
-        if (tempPolyRef.current) { map.removeLayer(tempPolyRef.current); tempPolyRef.current = null; }
-        if (vertexLayerRef.current) { vertexLayerRef.current.clearLayers(); }
-      } catch {}
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [drawState.mode, drawState.verts]);
-
+  /* ===== init mapa ===== */
   useEffect(() => {
     let destroyed = false;
+    hardResetScrollLocks();
 
     (async () => {
       try {
@@ -278,7 +235,6 @@ export default function MapClient({
         await import("leaflet.markercluster");
         injectClusterStyles();
 
-        // cria mapa (sem alterar margens/tamanho do container original)
         const map = L.map(mapHostRef.current!, {
           zoomControl: true,
           attributionControl: true,
@@ -287,10 +243,13 @@ export default function MapClient({
           touchZoom: true,
           doubleClickZoom: true,
           boxZoom: true,
-          keyboard: true,
+          keyboard: false,
           tap: false,
         });
         mapRef.current = map;
+
+        // Garantir que o mapa nunca passe por cima do header
+        (mapHostRef.current as HTMLElement).style.zIndex = "0";
 
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution:
@@ -298,7 +257,6 @@ export default function MapClient({
           maxZoom: 19,
         }).addTo(map);
 
-        // cluster
         const clusterGroup = (L as any).markerClusterGroup({
           showCoverageOnHover: false,
           zoomToBoundsOnClick: true,
@@ -310,7 +268,6 @@ export default function MapClient({
         clusterGroupRef.current = clusterGroup;
         map.addLayer(clusterGroup);
 
-        // ícones (normal e vendido)
         const makeIcon = (vendido: boolean) =>
           L.icon({
             iconUrl: vendido ? "/icons/pin-vendido.png" : "/icons/pin.png",
@@ -320,7 +277,6 @@ export default function MapClient({
             popupAnchor: [0, -36],
           });
 
-        // marcadores + popups
         const bounds = L.latLngBounds([]);
         for (const p of points) {
           const ll = L.latLng(p.geo.lat, p.geo.lng);
@@ -331,7 +287,6 @@ export default function MapClient({
           clusterGroup.addLayer(marker);
         }
 
-        // **fit** (preserva seu comportamento original)
         const shouldFit = fitToPoints ?? points.length !== 1;
         if (shouldFit && clusterGroup.getBounds?.().isValid()) {
           map.fitBounds(clusterGroup.getBounds().pad(0.2));
@@ -343,21 +298,40 @@ export default function MapClient({
           map.fitBounds(bounds.pad(0.2));
         }
 
-        /* ===== Scroll lock: liga/desliga conforme popup ===== */
+        /* ===== offset de controles abaixo do header ===== */
+        function offsetControlsBelowHeader() {
+          try {
+            const header =
+              (document.querySelector("header") as HTMLElement | null) ||
+              (document.querySelector("[data-site-header]") as HTMLElement | null);
+            const topPane = mapHostRef.current?.querySelector(".leaflet-top") as HTMLElement | null;
+            if (!topPane) return;
+            const h = header ? Math.ceil(header.getBoundingClientRect().height) : 0;
+            topPane.style.top = `${Math.max(8, h + 8)}px`; // respiro de 8px
+          } catch {}
+        }
+        offsetControlsBelowHeader();
+        const ro = new ResizeObserver(offsetControlsBelowHeader);
+        if (document.body) ro.observe(document.body);
+        window.addEventListener("resize", offsetControlsBelowHeader);
+
+        /* ===== scroll lock: ligar/desligar ao abrir/fechar popup ===== */
         const onPopupOpen = () => lockScroll();
         const onPopupClose = () => unlockScroll();
         map.on("popupopen", onPopupOpen);
         map.on("popupclose", onPopupClose);
 
-        // garante desbloqueio ao sair/navegar
-        const onBeforeUnload = () => unlockScroll();
-        window.addEventListener("beforeunload", onBeforeUnload);
+        // segurança extra ao remover o mapa
+        map.on("remove", () => hardResetScrollLocks());
 
-        // invalidate size em resize do container
-        const resizeObs = new ResizeObserver(() => {
-          try { map && map.invalidateSize(); } catch {}
+        // invalidateSize quando o container muda
+        const containerRO = new ResizeObserver(() => {
+          try {
+            map && map.invalidateSize();
+            offsetControlsBelowHeader();
+          } catch {}
         });
-        if (outerRef.current) resizeObs.observe(outerRef.current);
+        if (outerRef.current) containerRO.observe(outerRef.current);
 
         // cleanup
         return () => {
@@ -365,80 +339,67 @@ export default function MapClient({
           try {
             map.off("popupopen", onPopupOpen);
             map.off("popupclose", onPopupClose);
-            window.removeEventListener("beforeunload", onBeforeUnload);
-            unlockScroll(); // segurança
+            window.removeEventListener("resize", offsetControlsBelowHeader);
+            ro.disconnect();
+            containerRO.disconnect();
+            unlockScroll(); // garante desbloqueio
             map && map.remove();
             mapRef.current = null;
             const el: any = mapHostRef.current;
             if (el && el._leaflet_id) el._leaflet_id = undefined;
           } catch {}
-          resizeObs.disconnect();
         };
       } catch (err) {
         console.error("Erro inicializando o mapa:", err);
       }
     })();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(points), center?.lat, center?.lng, zoom, fitToPoints]);
 
-  // função que a PARTE 3 sobrescreve no init (TS friendly)
-  function refreshTempLayers(verts: Array<{ lat: number; lng: number }>) {
-    (window as any).__refreshTempLayers?.(verts);
-  }
-  /* ===== Atualiza camadas temporárias do desenho ===== */
-  function updateTempLayers(verts: Array<{ lat: number; lng: number }>) {
-    const L = (window as any).L;
-    const map = mapRef.current;
-    if (!L || !map) return;
-
-    // cria layerGroup de vértices se não existir
-    if (!vertexLayerRef.current) {
-      vertexLayerRef.current = L.layerGroup().addTo(map);
-    }
-
-    // linha tracejada
-    if (!tempLineRef.current) {
-      tempLineRef.current = L.polyline([], {
-        color: "#2563eb",
-        weight: 2,
-        dashArray: "6 4",
-      }).addTo(map);
-    }
-    tempLineRef.current.setLatLngs(verts.map((v) => L.latLng(v.lat, v.lng)));
-
-    // polígono translucido
-    if (verts.length >= 3) {
-      if (!tempPolyRef.current) {
-        tempPolyRef.current = L.polygon([], {
-          color: "#2563eb",
-          fillColor: "#3b82f6",
-          fillOpacity: 0.1,
-        }).addTo(map);
-      }
-      tempPolyRef.current.setLatLngs([verts.map((v) => L.latLng(v.lat, v.lng))]);
-    } else if (tempPolyRef.current) {
-      map.removeLayer(tempPolyRef.current);
-      tempPolyRef.current = null;
-    }
-
-    // vértices
-    vertexLayerRef.current.clearLayers();
-    verts.forEach((v) => {
-      L.circleMarker([v.lat, v.lng], {
-        radius: 4,
-        color: "#2563eb",
-        weight: 2,
-        fillColor: "#ffffff",
-        fillOpacity: 1,
-      }).addTo(vertexLayerRef.current);
-    });
-  }
-
-  /* ===== Liga/Desliga listeners de desenho conforme o modo ===== */
+  /* ===== desenho: listeners ligados só quando necessário ===== */
   useEffect(() => {
     const L = (window as any).L;
     const map = mapRef.current;
     if (!L || !map) return;
+
+    function updateTempLayers(verts: Array<{ lat: number; lng: number }>) {
+      if (!vertexLayerRef.current) vertexLayerRef.current = L.layerGroup().addTo(map);
+
+      if (!tempLineRef.current) {
+        tempLineRef.current = L.polyline([], {
+          color: "#2563eb",
+          weight: 2,
+          dashArray: "6 4",
+        }).addTo(map);
+      }
+      tempLineRef.current.setLatLngs(verts.map((v) => L.latLng(v.lat, v.lng)));
+
+      if (verts.length >= 3) {
+        if (!tempPolyRef.current) {
+          tempPolyRef.current = L.polygon([], {
+            color: "#2563eb",
+            fillColor: "#3b82f6",
+            fillOpacity: 0.1,
+          }).addTo(map);
+        }
+        tempPolyRef.current.setLatLngs([verts.map((v) => L.latLng(v.lat, v.lng))]);
+      } else if (tempPolyRef.current) {
+        map.removeLayer(tempPolyRef.current);
+        tempPolyRef.current = null;
+      }
+
+      vertexLayerRef.current.clearLayers();
+      verts.forEach((v) => {
+        L.circleMarker([v.lat, v.lng], {
+          radius: 4,
+          color: "#2563eb",
+          weight: 2,
+          fillColor: "#ffffff",
+          fillOpacity: 1,
+        }).addTo(vertexLayerRef.current);
+      });
+    }
 
     function onClick(e: any) {
       setDrawState((st) => {
@@ -466,10 +427,9 @@ export default function MapClient({
       map.off("click", onClick);
       map.off("dblclick", onDblClick);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [drawState.mode]);
+  }, [drawState.mode, drawState.verts]);
 
-  /* ===== Ações da toolbar ===== */
+  /* ===== ações toolbar ===== */
   function startDraw() {
     setDrawState({ mode: "drawing", verts: [] });
   }
@@ -483,9 +443,15 @@ export default function MapClient({
     const map = mapRef.current;
     setDrawState({ mode: "idle", verts: [] });
     try {
-      if (map && tempLineRef.current) { map.removeLayer(tempLineRef.current); tempLineRef.current = null; }
-      if (map && tempPolyRef.current) { map.removeLayer(tempPolyRef.current); tempPolyRef.current = null; }
-      if (vertexLayerRef.current) { vertexLayerRef.current.clearLayers(); }
+      if (map && tempLineRef.current) {
+        map.removeLayer(tempLineRef.current);
+        tempLineRef.current = null;
+      }
+      if (map && tempPolyRef.current) {
+        map.removeLayer(tempPolyRef.current);
+        tempPolyRef.current = null;
+      }
+      if (vertexLayerRef.current) vertexLayerRef.current.clearLayers();
     } catch {}
   }
   function vertsToQuery(verts: Array<{ lat: number; lng: number }>): string {
@@ -497,15 +463,17 @@ export default function MapClient({
     window.location.href = `/?poly=${poly}`;
   }
 
-  /* ===== JSX final ===== */
+  /* ===== JSX ===== */
   return (
-    <div ref={outerRef} className={className} style={{ position: "relative", ...(style || {}) }}>
+    <div
+      ref={outerRef}
+      className={className}
+      style={{ position: "relative", zIndex: 0, ...(style || {}) }}
+    >
       <div ref={mapHostRef} className="w-full h-full" />
 
       {(enableDraw ?? points.length > 1) && (
-        <div
-          className="absolute top-2 left-2 z-[2000] flex flex-wrap gap-2 bg-white/90 backdrop-blur rounded-xl border p-2 shadow"
-        >
+        <div className="absolute top-2 left-2 z-[2000] flex flex-wrap gap-2 bg-white/90 backdrop-blur rounded-xl border p-2 shadow">
           {drawState.mode === "idle" && (
             <button
               onClick={startDraw}
