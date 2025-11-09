@@ -251,12 +251,12 @@ export default function MapClient({
         // Garantir que o mapa nunca passe por cima do header
         (mapHostRef.current as HTMLElement).style.zIndex = "0";
 
-        L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-          maxZoom: 20,
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
           attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors ' +
-            '&copy; <a href="https://carto.com/attributions">CARTO</a>',
-        }).addTo(map);       
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
+              
 
         const clusterGroup = (L as any).markerClusterGroup({
           showCoverageOnHover: false,
