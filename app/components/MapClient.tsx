@@ -251,10 +251,14 @@ export default function MapClient({
         // Garantir que o mapa nunca passe por cima do header
         (mapHostRef.current as HTMLElement).style.zIndex = "0";
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        L.tileLayer("https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png", {
+          // subdomínios do servidor do CyclOSM (OpenStreetMap France)
+          subdomains: ["a", "b", "c"],
+          maxZoom: 20,
           attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-          maxZoom: 19,
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
+            'contributors | Tiles: <a href="https://www.cyclosm.org/">CyclOSM</a> ' +
+            '(<a href="https://www.openstreetmap.fr/">OSM France</a>)'
         }).addTo(map);
 
         const clusterGroup = (L as any).markerClusterGroup({
