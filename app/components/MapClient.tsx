@@ -271,8 +271,8 @@ export default function MapClient({
 
         const makeIcon = (vendido: boolean) =>
           L.icon({
-            iconUrl: vendido ? "/icons/pin-vendido.png" : "/icons/pin.png",
-            iconRetinaUrl: vendido ? "/icons/pin-vendido@2x.png" : "/icons/pin@2x.png",
+            iconUrl: vendido ? "/icons/pin.png" : "/icons/pin.png",
+            iconRetinaUrl: vendido ? "/icons/pin@2x.png" : "/icons/pin@2x.png",
             iconSize: [36, 36],
             iconAnchor: [18, 36],
             popupAnchor: [0, -36],
