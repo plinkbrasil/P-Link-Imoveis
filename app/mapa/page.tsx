@@ -20,12 +20,16 @@ type Pt = {
   moeda?: string;
   area_m2?: number | string;
   fotos?: string[];
+  mostrar_no_mapa?: boolean; // novo campo opcional
 };
 
 export default async function MapaPage() {
   const props = await listProperties();
 
   const pts: Pt[] = props
+    // 🔹 1. Filtra os que NÃO devem aparecer no mapa
+    .filter((p: any) => p.mostrar_no_mapa !== false)
+    // 🔹 2. Converte só os válidos pra o formato que o mapa usa
     .map((p) => {
       const ll = normalizeLatLng((p as any).geo);
       if (!ll) return null;
@@ -38,7 +42,6 @@ export default async function MapaPage() {
         preco: (p as any).preco,
         moeda: (p as any).moeda,
         area_m2: (p as any).area_m2,
-        // >>> necessário para o popup mostrar a primeira foto
         fotos: Array.isArray((p as any).fotos) ? (p as any).fotos : undefined,
       };
     })
@@ -51,14 +54,12 @@ export default async function MapaPage() {
 
   return (
     <div style={fullBleedStyle}>
-      {/* Spacer que imita a altura dinâmica do header */}
-      
       <MapClient
         points={pts}
         className="w-screen"
         style={{ height: "calc(100vh - var(--header-h, 0px))", minHeight: 420 }}
-        enableDraw={true}   // garante a barra de desenho (polígono)
-        fitToPoints         // enquadra todos os pontos
+        enableDraw={true}
+        fitToPoints
       />
     </div>
   );
