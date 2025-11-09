@@ -286,52 +286,10 @@ export default function MapClient({
           const marker = L.marker(ll, { icon: makeIcon(isVendido) });
           marker.bindPopup(popupCardHTML(p), {
             maxWidth: 320,
-            className: "leaflet-popup--card",
-            autoPan: false,
-            keepInView: false 
+            className: "leaflet-popup--card", 
           });
           clusterGroup.addLayer(marker);
         }
-
-        const centerPopupOnOpen = (e: any) => {
-          try {
-            const map = mapRef.current;
-            if (!map) return;
-        
-            // lat/lng do popup (âncora na pontinha da "seta")
-            const ll = e.popup.getLatLng();
-        
-            // Espera o DOM do popup montar para medir altura/largura
-            setTimeout(() => {
-              const container: HTMLElement | null =
-                e.popup.getElement?.() || (e.popup._container as HTMLElement | null);
-        
-              const size = map.getSize();                          // tamanho da viewport do mapa
-              const anchorPx = map.latLngToContainerPoint(ll);     // onde está a âncora hoje (px)
-              const popupH = container?.offsetHeight ?? 240;       // fallback
-              const tipApprox = 20;                                // altura aproximada da “seta” do popup
-        
-              // Queremos que o CENTRO do popup vá para o CENTRO da viewport.
-              // Como a âncora fica na base do popup, compensamos metade da altura.
-              const desired = (window as any).L.point(
-                size.x / 2,
-                size.y / 2 + (popupH / 2 - tipApprox)
-              );
-        
-              const delta = desired.subtract(anchorPx);            // quanto precisamos panear
-              map.panBy(delta, { animate: true, duration: 0.25 });
-            }, 0);
-          } catch {}
-        };
-        
-        // Ligue junto com seu lockScroll
-        map.on("popupopen", (e: any) => {
-          lockScroll();
-          centerPopupOnOpen(e);
-        });
-        map.on("popupclose", () => {
-          unlockScroll();
-        });
 
         const shouldFit = fitToPoints ?? points.length !== 1;
         if (shouldFit && clusterGroup.getBounds?.().isValid()) {
