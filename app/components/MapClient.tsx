@@ -86,16 +86,16 @@ function popupCardHTML(p: MapPoint) {
           precoNum === -1
             ? `
         <span style="
-          position:absolute; top:24px; right:-48px;
-          background:#dc2626; color:#fff; font-weight:700; font-size:16px;
+          position:absolute; top:20px; right:-42px;
+          background:#dc2626; color:#fff; font-weight:700; font-size:12px;
           padding:6px 50px; transform:rotate(45deg);
-          box-shadow:0 2px 6px rgba(0,0,0,.25); letter-spacing:.05em;
+          box-shadow:0 2px 6px rgba(0,0,0,.25); le  tter-spacing:.05em;
         ">VENDIDO</span>`
             : ""
         }
         ${
           hasDiscount
-            ? `
+            ? ` 
         <span style="
           position:absolute; top:8px; left:8px;
           background:#e11d48; color:#fff; font-size:12px;
