@@ -72,6 +72,11 @@ img {
   pointer-events: none; /* opcional se quiser bloquear total */
 }
 
+.whatsappfloat,
+.whatsappfloat * {
+  pointer-events: auto !important;
+}
+
 .price-text{font-weight:600;font-size:14px;margin-bottom:8px;}
 .price-text-lg{font-weight:600;font-size:1.5rem;line-height:2rem;}
 .price-ok{color:#065f46;}
