@@ -259,7 +259,7 @@ export default async function PropertyPage({ params }: { params: { id: string } 
   };
 
   return (
-    <article className="space-y-6 pt-6 md:pt-8 max-w-6xl mx-auto px-3">
+    <article className="space-y-6 pt-6 md:pt-2 max-w-6xl mx-auto px-3">
       {/* JSON-LD dentro do JSX (ok no App Router) */}
       <script
         type="application/ld+json"
