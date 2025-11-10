@@ -22,11 +22,19 @@ export default function WhatsAppFloat({ phoneE164, message }: Props) {
       rel="noopener noreferrer"
       aria-label="Falar no WhatsApp"
       title="Falar no WhatsApp"
+      className="whatsapp-float"
     >
       <img
         src={ICON_URL}
         alt="WhatsApp"
-        style={{ height: 80, position: 'fixed', bottom: 25, right: 25, zIndex: 99999 }}
+        style={{
+          height: 80,
+          position: 'fixed',
+          bottom: 25,
+          right: 25,
+          zIndex: 99999,
+          pointerEvents: 'auto', // garante clique mesmo com bloqueio global
+        }}
       />
     </a>
   );

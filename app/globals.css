@@ -72,8 +72,9 @@ img {
   pointer-events: none; /* opcional se quiser bloquear total */
 }
 
-.whatsappfloat,
-.whatsappfloat * {
+/* Libera cliques no botão do WhatsApp flutuante */
+.whatsapp-float,
+.whatsapp-float * {
   pointer-events: auto !important;
 }
 
