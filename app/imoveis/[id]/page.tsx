@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import ShareButton from "@/app/components/ShareButton";
 import dynamic from "next/dynamic";
 import { normalizeLatLng } from "@/lib/geo";
 import { getPropertyBySlugOrId, listProperties } from "@/lib/properties";
@@ -259,7 +260,7 @@ export default async function PropertyPage({ params }: { params: { id: string } 
   };
 
   return (
-    <article className="space-y-6 pt-6 md:pt-2 max-w-6xl mx-auto px-3">
+    <article className="space-y-6 pt-0 max-w-6xl mx-auto px-3">
       {/* JSON-LD dentro do JSX (ok no App Router) */}
       <script
         type="application/ld+json"
@@ -288,7 +289,7 @@ export default async function PropertyPage({ params }: { params: { id: string } 
 </div>
 
 {/* Botão de compartilhar */}
-
+<ShareButton />
 
       </header>
 
