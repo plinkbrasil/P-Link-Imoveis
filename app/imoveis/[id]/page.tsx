@@ -259,7 +259,7 @@ export default async function PropertyPage({ params }: { params: { id: string } 
   };
 
   return (
-    <article className="space-y-6 pt-28 md:pt-32 max-w-6xl mx-auto px-3">
+    <article className="space-y-6 pt-6 md:pt-8 max-w-6xl mx-auto px-3">
       {/* JSON-LD dentro do JSX (ok no App Router) */}
       <script
         type="application/ld+json"
@@ -286,6 +286,27 @@ export default async function PropertyPage({ params }: { params: { id: string } 
     </div>
   )}
 </div>
+
+{/* Botão de compartilhar */}
+<button
+  onClick={() => {
+    const url = typeof window !== 'undefined' ? window.location.href : '';
+    const title = document.title || 'Imóvel disponível';
+    if (navigator.share) {
+      navigator.share({ title, url }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(url);
+      alert('Link copiado para a área de transferência!');
+    }
+  }}
+  className="flex items-center gap-2 mt-2 px-3 py-2 bg-[#0a454f] text-white text-sm rounded-lg hover:opacity-90 transition"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4m0 0L8 6m4-4v16" />
+  </svg>
+  Compartilhar
+</button>
+
       </header>
 
       {/* Fotos com galeria clicável */}
