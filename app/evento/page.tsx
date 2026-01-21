@@ -16,7 +16,7 @@ export default function EventoPage() {
         {/* BRASAO */}
         <div className="w-full overflow-hidden rounded-2xl shadow-lg">
           <img
-            src="/public/brasao.png" // você troca aqui
+            src="/brasao.png" // você troca aqui
             alt="Família"
             className="w-full h-auto object-cover"
           />
@@ -25,7 +25,7 @@ export default function EventoPage() {
         {/* FOTO */}
         <div className="w-full overflow-hidden rounded-2xl shadow-lg">
           <img
-            src="/public/familia.png" // você troca aqui
+            src="/familia.png" // você troca aqui
             alt="Família"
             className="w-full h-auto object-cover"
           />
