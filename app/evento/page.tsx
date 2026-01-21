@@ -13,20 +13,20 @@ export default function EventoPage() {
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#d2b977] to-[#b79a60] px-4">
       <div className="max-w-xl w-full text-center space-y-6 text-white">
 
-        {/* FOTO */}
+        {/* BRASAO */}
         <div className="w-full overflow-hidden rounded-2xl shadow-lg">
           <img
-            src="/evento-familia.png" // você troca aqui
+            src="/public/brasao.png" // você troca aqui
             alt="Família"
             className="w-full h-auto object-cover"
           />
         </div>
 
-        {/* FOTO 2*/}
+        {/* FOTO */}
         <div className="w-full overflow-hidden rounded-2xl shadow-lg">
           <img
-            src="/evento-brasao.png" // você troca aqui
-            alt="Brasão Dyba"
+            src="/public/familia.png" // você troca aqui
+            alt="Família"
             className="w-full h-auto object-cover"
           />
         </div>
