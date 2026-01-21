@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function EventoPage() {
   return (
-    <main className="min-h-screen flex items-top pt-8 justify-center bg-gradient-to-br from-[#0c0f14] to-[#0a454f] px-4">
+    <main className="min-h-screen flex items-top pt-4 justify-center bg-gradient-to-br from-[#0c0f14] to-[#0a454f] px-4">
       <div className="max-w-xl w-full text-center space-y-6 text-white">
 
             {/* Brasão */}
