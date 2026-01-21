@@ -24,7 +24,7 @@ export default function EventoPage() {
 
         {/* TÍTULO */}
         <h1 className="text-3xl md:text-4xl font-bold">
-          Nome do Grande Evento
+        A festa mais esperada de 2026!
         </h1>
 
         {/* DESCRIÇÃO */}
