@@ -10,11 +10,11 @@ export const metadata = {
 
 export default function EventoPage() {
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#d2b977] to-[#b79a60] px-4">
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0c0f14] to-[#0a454f] px-4">
       <div className="max-w-xl w-full text-center space-y-6 text-white">
 
         {/* FOTO */}
-        <div className="w-full overflow-hidden rounded-2xl shadow-lg">
+        <div className="w-full overflow-hidden rounded-2xl">
           <img
             src="/familia.png" // você troca aqui
             alt="Família"
