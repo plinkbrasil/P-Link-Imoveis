@@ -256,7 +256,10 @@ export default async function PropertyPage({ params }: { params: { id: string } 
             availability: "https://schema.org/InStock",
           }
         : undefined,
-    areaServed: "Região Metropolitana de Curitiba",
+        areaServed: {
+          "@type": "AdministrativeArea",
+          "name": "Brasil"
+        },
   };
 
   return (

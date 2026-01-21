@@ -43,11 +43,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const orgLd = {
     "@context": "https://schema.org",
     "@type": "RealEstateAgent",
-    name: "P-Link Imóveis",
-    url: "https://www.p-linkimoveis.com.br/",
-    logo: "https://www.p-linkimoveis.com.br/logo.svg",
-    sameAs: ["https://www.instagram.com/paulo.stephens"],
-    telephone: "+55 41 98709-8082",
+    "name": "P-Link Imóveis",
+    "url": "https://www.p-linkimoveis.com.br/",
+    "logo": "https://www.p-linkimoveis.com.br/logo.svg",
+    "sameAs": ["https://www.instagram.com/paulo.stephens"],
+    "telephone": "+55 41 98709-8082",
+    "areaServed": {
+      "@type": "Country",
+      "name": "Brasil"
+    }
   };
 
   return (
