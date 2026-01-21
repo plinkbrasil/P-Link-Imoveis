@@ -14,7 +14,7 @@ export default function EventoPage() {
       <div className="max-w-xl w-full text-center space-y-6 text-white">
 
         {/* BRASAO */}
-        <div className="w-full overflow-hidden rounded-2xl shadow-lg">
+        <div className="w-full overflow-hidden rounded-2xl">
           <img
             src="/brasao.png" // você troca aqui
             alt="Família"
