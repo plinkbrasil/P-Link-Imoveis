@@ -43,7 +43,7 @@ export default function Countdown({ targetDate }: Props) {
   }
 
   const Item = ({ value, label }: { value: number; label: string }) => (
-    <div className="flex flex-col items-center bg-white/0 rounded-xl px-4 py-3 shadow">
+    <div className="flex flex-col items-center bg-white/10 rounded-xl px-4 py-3 shadow">
       <div className="text-3xl font-bold">{value}</div>
       <div className="text-xs uppercase tracking-wide text-zinc-500">{label}</div>
     </div>
