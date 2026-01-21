@@ -16,7 +16,7 @@ export default function EventoPage() {
         {/* FOTO */}
         <div className="w-full overflow-hidden rounded-2xl shadow-lg">
           <img
-            src="/evento-familia.jpg" // você troca aqui
+            src="/evento-familia.png" // você troca aqui
             alt="Família"
             className="w-full h-auto object-cover"
           />
