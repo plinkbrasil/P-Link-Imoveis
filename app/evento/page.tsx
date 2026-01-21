@@ -11,15 +11,16 @@ export const metadata = {
 export default function EventoPage() {
   return (
     <main className="min-h-screen flex items-top pt-32 justify-center bg-gradient-to-br from-[#0c0f14] to-[#0a454f] px-4">
-      <div className="max-w-xl w-full text-center space-y-6 text-white">
 
-        {/* Brasão */}
+    {/* Brasão */}
     <img
       src="/brasao.png"
       alt="Brasão Dyba"
       className="w-full h-auto rounded-xl"
       draggable={false}
     />
+
+      <div className="max-w-xl w-full text-center space-y-6 text-white">
 
         {/* FOTO */}
         <div className="w-full overflow-hidden rounded-2xl">
