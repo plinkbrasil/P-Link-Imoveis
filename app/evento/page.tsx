@@ -33,7 +33,7 @@ export default function EventoPage() {
         </p>
 
         {/* CRONÔMETRO */}
-        <Countdown targetDate="2026-12-31T20:00:00" />
+        <Countdown targetDate="2026-02-14T00:00:00" />
 
       </div>
     </main>

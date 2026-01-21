@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 type Props = {
-  targetDate:"2026-02-14T00:00:00" 
+  targetDate: string; // ISO: "2026-12-31T20:00:00"
 };
 
 function getTimeLeft(target: Date) {
