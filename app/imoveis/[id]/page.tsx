@@ -8,6 +8,54 @@ import { getThreeDPageUrl } from "@/lib/three";
 import Async3DViewer from "@/app/components/Async3DViewer";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import fs from "fs";
+import path from "path";
+
+type Props = {
+  params: { slug: string };
+};
+
+// 🔥 GERA META DINÂICO (WhatsApp, Google, etc)
+export async function generateMetadata({ params }: Props) {
+  const basePath = path.join(process.cwd(), "public/content/properties");
+  const folders = fs.readdirSync(basePath);
+
+  let meta = null;
+
+  for (const folder of folders) {
+    const metaPath = path.join(basePath, folder, "meta.json");
+    if (!fs.existsSync(metaPath)) continue;
+
+    const json = JSON.parse(fs.readFileSync(metaPath, "utf-8"));
+    if (json.slug === params.slug) {
+      meta = json;
+      break;
+    }
+  }
+
+  if (!meta) {
+    return { title: "Imóvel não encontrado" };
+  }
+
+  const imageUrl = `https://www.p-linkimoveis.com.br/content/properties/${meta.id}/fotos/1.jpg`;
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    openGraph: {
+      title: meta.title,
+      description: meta.description,
+      url: `https://www.p-linkimoveis.com.br/imovel/${meta.slug}`,
+      images: [
+        {
+          url: imageUrl,
+          width: 1920,
+          height: 1080,
+        },
+      ],
+      type: "article",
+    },
+  };
 
 const MapClient = dynamic(() => import("@/app/components/MapClient"), { ssr: false });
 
