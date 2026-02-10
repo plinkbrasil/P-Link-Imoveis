@@ -18,8 +18,8 @@ const MapClient = dynamic(() => import("@/app/components/MapClient"), { ssr: fal
 ========================================================= */
 
 type MetaIndexItem = {
-  id: string;
-  slug: string;
+  id: string;              // ID REAL DA PASTA (TR007)
+  slug: string;            // slug amigável
   title?: string;
   description?: string;
   ogImage: string;
@@ -33,48 +33,45 @@ function loadMetaIndex(): Record<string, MetaIndexItem> {
   const index: Record<string, MetaIndexItem> = {};
   const basePath = path.join(process.cwd(), "public/content/properties");
 
-  try {
-    const folders = fs.readdirSync(basePath);
+  const folders = fs.readdirSync(basePath);
 
-    for (const folder of folders) {
-      const metaPath = path.join(basePath, folder, "meta.json");
-      if (!fs.existsSync(metaPath)) continue;
+  for (const folder of folders) {
+    const metaPath = path.join(basePath, folder, "meta.json");
+    if (!fs.existsSync(metaPath)) continue;
 
-      const meta = JSON.parse(fs.readFileSync(metaPath, "utf-8"));
+    const meta = JSON.parse(fs.readFileSync(metaPath, "utf-8"));
 
-      const id = String(meta.id || folder);
-      const slug = String(meta.slug || id);
+    const id = String(meta.id || folder).toUpperCase();
+    const slug = String(meta.slug || id).toLowerCase();
 
-      const imageFsPath = path.join(
-        basePath,
-        id,
-        "fotos",
-        "1.jpg"
-      );
+    const imageFsPath = path.join(
+      basePath,
+      id,
+      "fotos",
+      "1.jpg"
+    );
 
-      const ogImage = fs.existsSync(imageFsPath)
-        ? `/content/properties/${id}/fotos/1.jpg`
-        : `/og-preview.jpg`;
+    const ogImage = fs.existsSync(imageFsPath)
+      ? `/content/properties/${id}/fotos/1.jpg`
+      : `/og-preview.jpg`;
 
-      const item: MetaIndexItem = {
-        id,
-        slug,
-        title: meta.title,
-        description: meta.description,
-        ogImage,
-      };
+    const item: MetaIndexItem = {
+      id,
+      slug,
+      title: meta.title,
+      description: meta.description,
+      ogImage,
+    };
 
-      // 🔑 indexa por slug e por id (case-insensitive)
-      index[slug.toLowerCase()] = item;
-      index[id.toLowerCase()] = item;
-    }
-  } catch {
-    // nunca quebrar build / SEO
+    // 🔑 slug e id apontam para o MESMO item
+    index[id.toLowerCase()] = item;
+    index[slug.toLowerCase()] = item;
   }
 
   META_INDEX = index;
   return index;
 }
+
 
 /* =========================================================
    HELPER
@@ -101,9 +98,11 @@ export async function generateMetadata(
   const host =
     hdrs.get("x-forwarded-host") ||
     hdrs.get("host") ||
-    "www.plinkimoveis.com.br";
+    "www.p-linkimoveis.com.br";
 
-  const url = absoluteUrl(`/imoveis/${params.id}`, host);
+  const canonicalId = meta?.slug || params.id;
+
+  const url = `https://${host}/imoveis/${canonicalId}`;
 
   const title =
     meta?.title || "Imóvel | P-Link Imóveis";
@@ -112,10 +111,7 @@ export async function generateMetadata(
     meta?.description ||
     "Imóveis comerciais, residenciais e industriais no Brasil.";
 
-  const ogImage = absoluteUrl(
-    meta?.ogImage || "/og-preview.jpg",
-    host
-  );
+  const ogImage = `https://${host}${meta?.ogImage || "/og-preview.jpg"}`;
 
   return {
     title,
@@ -141,12 +137,9 @@ export async function generateMetadata(
       description,
       images: [ogImage],
     },
-    robots: {
-      index: true,
-      follow: true,
-    },
   };
 }
+
 
 /* =========================================================
    PÁGINA PRINCIPAL
