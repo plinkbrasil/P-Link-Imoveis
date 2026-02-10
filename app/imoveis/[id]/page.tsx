@@ -11,41 +11,48 @@ import { headers } from "next/headers";
 import fs from "fs";
 import path from "path";
 
-type Props = {
-  params: { slug: string };
-};
 
-// 🔥 GERA META DINÂICO (WhatsApp, Google, etc)
-export async function generateMetadata({ params }: Props) {
+const MapClient = dynamic(() => import("@/app/components/MapClient"), { ssr: false });
+
+export async function generateMetadata(
+  { params }: { params: { slug: string } }
+): Promise<Metadata> {
   const basePath = path.join(process.cwd(), "public/content/properties");
   const folders = fs.readdirSync(basePath);
 
-  let meta = null;
+  let meta: any = null;
 
   for (const folder of folders) {
     const metaPath = path.join(basePath, folder, "meta.json");
     if (!fs.existsSync(metaPath)) continue;
 
     const json = JSON.parse(fs.readFileSync(metaPath, "utf-8"));
-    if (json.slug === params.slug) {
+    if (json.slug === params.slug || json.id === params.slug) {
       meta = json;
       break;
     }
   }
 
   if (!meta) {
-    return { title: "Imóvel não encontrado" };
+    return {
+      title: "Imóvel não encontrado | P-Link Imóveis",
+      description: "Imóveis comerciais, residenciais e industriais.",
+    };
   }
 
   const imageUrl = `https://www.p-linkimoveis.com.br/content/properties/${meta.id}/fotos/1.jpg`;
+  const url = `https://www.p-linkimoveis.com.br/imoveis/${meta.slug}`;
 
   return {
     title: meta.title,
     description: meta.description,
+    alternates: { canonical: url },
     openGraph: {
+      type: "article",
       title: meta.title,
       description: meta.description,
-      url: `https://www.p-linkimoveis.com.br/imovel/${meta.slug}`,
+      url,
+      siteName: "P-Link Imóveis",
       images: [
         {
           url: imageUrl,
@@ -53,11 +60,20 @@ export async function generateMetadata({ params }: Props) {
           height: 1080,
         },
       ],
-      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: meta.title,
+      description: meta.description,
+      images: [imageUrl],
+    },
+    robots: {
+      index: true,
+      follow: true,
     },
   };
+}
 
-const MapClient = dynamic(() => import("@/app/components/MapClient"), { ssr: false });
 
 /* ---------- Funções utilitárias ---------- */
 function coerceNumAny(x: any): number | undefined {
@@ -407,6 +423,8 @@ export default async function PropertyPage({ params }: { params: { id: string } 
           </div>
         </section>
       ) : null}
+
+      
 
       {/* 3D — checa existência via componente client separado */}
       {viewer3d && <Async3DViewer url={viewer3d} code={code} />}
