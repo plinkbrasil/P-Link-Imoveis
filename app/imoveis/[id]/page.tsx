@@ -14,69 +14,88 @@ import path from "path";
 const MapClient = dynamic(() => import("@/app/components/MapClient"), { ssr: false });
 
 /* =========================================================
-   META.JSON — leitura direta por slug ou id
+   CACHE GLOBAL DE METADATA (CARREGA UMA VEZ)
 ========================================================= */
-function getMetaFromFilesystem(slugOrId: string) {
-  try {
-    const needle = slugOrId.toLowerCase();
 
-    const basePath = path.join(process.cwd(), "public/content/properties");
+type MetaIndexItem = {
+  id: string;
+  slug: string;
+  title?: string;
+  description?: string;
+  ogImage: string;
+};
+
+let META_INDEX: Record<string, MetaIndexItem> | null = null;
+
+function loadMetaIndex(): Record<string, MetaIndexItem> {
+  if (META_INDEX) return META_INDEX;
+
+  const index: Record<string, MetaIndexItem> = {};
+  const basePath = path.join(process.cwd(), "public/content/properties");
+
+  try {
     const folders = fs.readdirSync(basePath);
 
     for (const folder of folders) {
       const metaPath = path.join(basePath, folder, "meta.json");
       if (!fs.existsSync(metaPath)) continue;
 
-      const json = JSON.parse(fs.readFileSync(metaPath, "utf-8"));
+      const meta = JSON.parse(fs.readFileSync(metaPath, "utf-8"));
 
-      const slug = String(json.slug || "").toLowerCase();
-      const id   = String(json.id || "").toLowerCase();
+      const id = String(meta.id || folder);
+      const slug = String(meta.slug || id);
 
-      if (slug === needle || id === needle) {
-        return json;
-      }
+      const imageFsPath = path.join(
+        basePath,
+        id,
+        "fotos",
+        "1.jpg"
+      );
+
+      const ogImage = fs.existsSync(imageFsPath)
+        ? `/content/properties/${id}/fotos/1.jpg`
+        : `/og-preview.jpg`;
+
+      const item: MetaIndexItem = {
+        id,
+        slug,
+        title: meta.title,
+        description: meta.description,
+        ogImage,
+      };
+
+      // 🔑 indexa por slug e por id (case-insensitive)
+      index[slug.toLowerCase()] = item;
+      index[id.toLowerCase()] = item;
     }
   } catch {
-    // nunca quebrar SEO
+    // nunca quebrar build / SEO
   }
 
-  return null;
+  META_INDEX = index;
+  return index;
 }
 
 /* =========================================================
-   HELPERS
+   HELPER
 ========================================================= */
+
 function absoluteUrl(p: string, host: string) {
   if (/^https?:\/\//i.test(p)) return p;
   return `https://${host}${p.startsWith("/") ? p : `/${p}`}`;
 }
 
 /* =========================================================
-   METADATA — SEO + WHATSAPP (OG IMAGE AUTOMÁTICO)
+   METADATA — SEO + WHATSAPP (ESTÁVEL)
 ========================================================= */
+
 export async function generateMetadata(
   { params }: { params: { id: string } }
 ): Promise<Metadata> {
 
-  const slugOrId = params.id;
-
-  // 1️⃣ tenta meta.json
-  const fsMeta = getMetaFromFilesystem(slugOrId);
-
-  // 2️⃣ fallback dinâmico
-  const prop = fsMeta
-    ? null
-    : await getPropertyBySlugOrId(slugOrId).catch(() => null);
-
-  const title =
-    fsMeta?.title ||
-    prop?.titulo ||
-    "Imóvel | P-Link Imóveis";
-
-  const description =
-    fsMeta?.description ||
-    prop?.descricao?.[0] ||
-    "Imóveis comerciais, residenciais e industriais no Brasil.";
+  const key = params.id.toLowerCase();
+  const index = loadMetaIndex();
+  const meta = index[key];
 
   const hdrs = headers();
   const host =
@@ -84,36 +103,19 @@ export async function generateMetadata(
     hdrs.get("host") ||
     "www.plinkimoveis.com.br";
 
-  const url = absoluteUrl(`/imoveis/${slugOrId}`, host);
+  const url = absoluteUrl(`/imoveis/${params.id}`, host);
 
-  // 🔑 ID REAL DA PASTA
-  const propertyId =
-    fsMeta?.id ||
-    (prop as any)?.id ||
-    null;
+  const title =
+    meta?.title || "Imóvel | P-Link Imóveis";
 
-  // 🔥 OG IMAGE AUTOMÁTICO (WHATSAPP)
-  let ogImage = absoluteUrl("/og-preview.jpg", host);
+  const description =
+    meta?.description ||
+    "Imóveis comerciais, residenciais e industriais no Brasil.";
 
-if (propertyId) {
-  const imagePath = path.join(
-    process.cwd(),
-    "public",
-    "content",
-    "properties",
-    String(propertyId),
-    "fotos",
-    "1.jpg"
+  const ogImage = absoluteUrl(
+    meta?.ogImage || "/og-preview.jpg",
+    host
   );
-
-  if (fs.existsSync(imagePath)) {
-    ogImage = absoluteUrl(
-      `/content/properties/${propertyId}/fotos/1.jpg`,
-      host
-    );
-  }
-}
-
 
   return {
     title,
@@ -149,6 +151,7 @@ if (propertyId) {
 /* =========================================================
    PÁGINA PRINCIPAL
 ========================================================= */
+
 export default async function PropertyPage({ params }: { params: { id: string } }) {
   const prop = await getPropertyBySlugOrId(params.id).catch(() => null);
   if (!prop) notFound();
