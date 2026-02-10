@@ -18,6 +18,8 @@ const MapClient = dynamic(() => import("@/app/components/MapClient"), { ssr: fal
 ========================================================= */
 function getMetaFromFilesystem(slugOrId: string) {
   try {
+    const needle = slugOrId.toLowerCase();
+
     const basePath = path.join(process.cwd(), "public/content/properties");
     const folders = fs.readdirSync(basePath);
 
@@ -27,13 +29,17 @@ function getMetaFromFilesystem(slugOrId: string) {
 
       const json = JSON.parse(fs.readFileSync(metaPath, "utf-8"));
 
-      if (json.slug === slugOrId || String(json.id) === slugOrId) {
+      const slug = String(json.slug || "").toLowerCase();
+      const id   = String(json.id || "").toLowerCase();
+
+      if (slug === needle || id === needle) {
         return json;
       }
     }
   } catch {
-    // SEO nunca pode quebrar o build
+    // nunca quebrar SEO
   }
+
   return null;
 }
 
@@ -87,12 +93,27 @@ export async function generateMetadata(
     null;
 
   // 🔥 OG IMAGE AUTOMÁTICO (WHATSAPP)
-  const ogImage = propertyId
-    ? absoluteUrl(
-        `/content/properties/${propertyId}/fotos/1.jpg`,
-        host
-      )
-      : absoluteUrl("/og-preview.jpg", host);
+  let ogImage = absoluteUrl("/og-preview.jpg", host);
+
+if (propertyId) {
+  const imagePath = path.join(
+    process.cwd(),
+    "public",
+    "content",
+    "properties",
+    String(propertyId),
+    "fotos",
+    "1.jpg"
+  );
+
+  if (fs.existsSync(imagePath)) {
+    ogImage = absoluteUrl(
+      `/content/properties/${propertyId}/fotos/1.jpg`,
+      host
+    );
+  }
+}
+
 
   return {
     title,
