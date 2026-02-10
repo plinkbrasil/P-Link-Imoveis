@@ -15,6 +15,28 @@ import path from "path";
 const MapClient = dynamic(() => import("@/app/components/MapClient"), { ssr: false });
 
 /* ---------- Funções utilitárias ---------- */
+function getMetaFromFilesystem(slugOrId: string) {
+  try {
+    const basePath = path.join(process.cwd(), "public/content/properties");
+    const folders = fs.readdirSync(basePath);
+
+    for (const folder of folders) {
+      const metaPath = path.join(basePath, folder, "meta.json");
+      if (!fs.existsSync(metaPath)) continue;
+
+      const json = JSON.parse(fs.readFileSync(metaPath, "utf-8"));
+
+      if (json.slug === slugOrId || String(json.id) === slugOrId) {
+        return json;
+      }
+    }
+  } catch {
+    // silêncio intencional — SEO nunca pode quebrar build
+  }
+
+  return null;
+}
+
 function coerceNumAny(x: any): number | undefined {
   if (typeof x === "number" && Number.isFinite(x)) return x;
   if (typeof x === "string") {
@@ -135,21 +157,48 @@ function absoluteUrl(path: string, host?: string) {
 export async function generateMetadata(
   { params }: { params: { id: string } }
 ): Promise<Metadata> {
-  const prop = await getPropertyBySlugOrId(params.id).catch(() => null);
 
+  const slugOrId = params.id;
 
-  
-  const title = prop ? buildTitle(prop) : "Imóvel | P-Link Imóveis";
-  const description = prop ? buildDescription(prop) : "Imóveis comerciais, residenciais e industriais na RMC.";
+  // 1️⃣ tenta meta.json (filesystem)
+  const fsMeta = getMetaFromFilesystem(slugOrId);
+
+  // 2️⃣ fallback: dados dinâmicos
+  const prop = fsMeta
+    ? null
+    : await getPropertyBySlugOrId(slugOrId).catch(() => null);
+
+  const title =
+    fsMeta?.title ||
+    (prop ? buildTitle(prop) : "Imóvel | P-Link Imóveis");
+
+  const description =
+    fsMeta?.description ||
+    (prop ? buildDescription(prop) : "Imóveis comerciais, residenciais e industriais na RMC.");
 
   const hdrs = headers();
-  const host = hdrs.get("x-forwarded-host") || hdrs.get("host") || "www.plinkimoveis.com.br";
-  const slugOrId = (prop as any)?.slug || params.id;
+  const host =
+    hdrs.get("x-forwarded-host") ||
+    hdrs.get("host") ||
+    "www.plinkimoveis.com.br";
+
   const url = absoluteUrl(`/imoveis/${slugOrId}`, host);
 
-  const firstPhoto = Array.isArray((prop as any)?.fotos) ? String((prop as any)!.fotos[0] || "") : "";
-  const isHttpUrl = /^https?:\/\//i.test(firstPhoto) || firstPhoto.startsWith("/");
-  const ogImage = isHttpUrl ? absoluteUrl(firstPhoto, host) : absoluteUrl("/og/plink-default.jpg", host);
+  const ogImage =
+    fsMeta
+      ? absoluteUrl(
+          `/content/properties/${fsMeta.id}/fotos/1.jpg`,
+          host
+        )
+      : (() => {
+          const firstPhoto = Array.isArray((prop as any)?.fotos)
+            ? String((prop as any).fotos[0] || "")
+            : "";
+          const isHttp = /^https?:\/\//i.test(firstPhoto) || firstPhoto.startsWith("/");
+          return isHttp
+            ? absoluteUrl(firstPhoto, host)
+            : absoluteUrl("/og/plink-default.jpg", host);
+        })();
 
   return {
     title,
@@ -161,18 +210,18 @@ export async function generateMetadata(
       title,
       description,
       siteName: "P-Link Imóveis",
-      images: [{ url: ogImage }]
+      images: [{ url: ogImage, width: 1920, height: 1080 }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [ogImage]
+      images: [ogImage],
     },
     robots: {
       index: true,
-      follow: true
-    }
+      follow: true,
+    },
   };
 }
 
