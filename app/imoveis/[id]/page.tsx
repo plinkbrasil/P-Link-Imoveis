@@ -93,7 +93,7 @@ export async function generateMetadata(
 
     if (fs.existsSync(ogPath)) {
       ogImage = absoluteUrl(
-        `/content/properties/${propertyId}/1.jpg`,
+        `/content/properties/${propertyId}/fotos/1.jpg`,
         host
       );
     }
