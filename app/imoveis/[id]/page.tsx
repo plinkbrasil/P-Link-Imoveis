@@ -14,67 +14,6 @@ import path from "path";
 
 const MapClient = dynamic(() => import("@/app/components/MapClient"), { ssr: false });
 
-export async function generateMetadata(
-  { params }: { params: { slug: string } }
-): Promise<Metadata> {
-  const basePath = path.join(process.cwd(), "public/content/properties");
-  const folders = fs.readdirSync(basePath);
-
-  let meta: any = null;
-
-  for (const folder of folders) {
-    const metaPath = path.join(basePath, folder, "meta.json");
-    if (!fs.existsSync(metaPath)) continue;
-
-    const json = JSON.parse(fs.readFileSync(metaPath, "utf-8"));
-    if (json.slug === params.slug || json.id === params.slug) {
-      meta = json;
-      break;
-    }
-  }
-
-  if (!meta) {
-    return {
-      title: "Imóvel não encontrado | P-Link Imóveis",
-      description: "Imóveis comerciais, residenciais e industriais.",
-    };
-  }
-
-  const imageUrl = `https://www.p-linkimoveis.com.br/content/properties/${meta.id}/fotos/1.jpg`;
-  const url = `https://www.p-linkimoveis.com.br/imoveis/${meta.slug}`;
-
-  return {
-    title: meta.title,
-    description: meta.description,
-    alternates: { canonical: url },
-    openGraph: {
-      type: "article",
-      title: meta.title,
-      description: meta.description,
-      url,
-      siteName: "P-Link Imóveis",
-      images: [
-        {
-          url: imageUrl,
-          width: 1920,
-          height: 1080,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: meta.title,
-      description: meta.description,
-      images: [imageUrl],
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
-  };
-}
-
-
 /* ---------- Funções utilitárias ---------- */
 function coerceNumAny(x: any): number | undefined {
   if (typeof x === "number" && Number.isFinite(x)) return x;
@@ -199,7 +138,56 @@ export async function generateMetadata(
   const prop = await getPropertyBySlugOrId(params.id).catch(() => null);
 
   const title = prop ? buildTitle(prop) : "Imóvel | P-Link Imóveis";
-  const description = prop ? buildDescription(prop) : "Imóveis comerciais, residenciais e industriais na RMC.";
+  const description = prop
+    ? buildDescription(prop)
+    : "Imóveis comerciais, residenciais e industriais na RMC.";
+
+  const hdrs = headers();
+  const host =
+    hdrs.get("x-forwarded-host") ||
+    hdrs.get("host") ||
+    "www.plinkimoveis.com.br";
+
+  const slugOrId = (prop as any)?.slug || params.id;
+  const url = absoluteUrl(`/imoveis/${slugOrId}`, host);
+
+  const firstPhoto = Array.isArray((prop as any)?.fotos)
+    ? String((prop as any)!.fotos[0] || "")
+    : "";
+  const isHttpUrl =
+    /^https?:\/\//i.test(firstPhoto) || firstPhoto.startsWith("/");
+  const ogImage = isHttpUrl
+    ? absoluteUrl(firstPhoto, host)
+    : absoluteUrl("/og/plink-default.jpg", host);
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      title,
+      description,
+      siteName: "P-Link Imóveis",
+      images: [{ url: ogImage }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
+
+
+  const title = prop ? buildTitle(prop) : "Imóvel | P-Link Imóveis";
+  const description = prop ? buildDescription(prop) : "Imóveis comerciais, residenciais e industriais.";
 
   const hdrs = headers();
   const host = hdrs.get("x-forwarded-host") || hdrs.get("host") || "www.plinkimoveis.com.br";
