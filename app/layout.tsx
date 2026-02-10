@@ -73,6 +73,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* ================================= */}
       </head>
 
+      <meta property="og:image" content="https://p-linkimoveis.com.br/og-preview.jpg" />
+
       <body className="min-h-screen bg-white text-zinc-900">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }} />
