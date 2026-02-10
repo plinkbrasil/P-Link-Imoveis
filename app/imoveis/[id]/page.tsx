@@ -1,81 +1,45 @@
-import { notFound } from "next/navigation";
-import ShareButton from "@/app/components/ShareButton";
+import { notFound, redirect } from "next/navigation";
 import dynamic from "next/dynamic";
-import { normalizeLatLng } from "@/lib/geo";
-import { getPropertyBySlugOrId, listProperties } from "@/lib/properties";
-import PhotoGallery from "@/app/components/PhotoGallery";
-import { getThreeDPageUrl } from "@/lib/three";
-import Async3DViewer from "@/app/components/Async3DViewer";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import fs from "fs";
 import path from "path";
 
+import ShareButton from "@/app/components/ShareButton";
+import PhotoGallery from "@/app/components/PhotoGallery";
+import Async3DViewer from "@/app/components/Async3DViewer";
+import { normalizeLatLng } from "@/lib/geo";
+import { getPropertyBySlugOrId, listProperties } from "@/lib/properties";
+import { getThreeDPageUrl } from "@/lib/three";
+
 const MapClient = dynamic(() => import("@/app/components/MapClient"), { ssr: false });
 
 /* =========================================================
-   CACHE GLOBAL DE METADATA (CARREGA UMA VEZ)
+   FS META CACHE (slug OU id)
 ========================================================= */
+function getMetaFromFilesystem(slugOrId: string) {
+  try {
+    const needle = slugOrId.toLowerCase();
+    const basePath = path.join(process.cwd(), "public/content/properties");
+    const folders = fs.readdirSync(basePath);
 
-type MetaIndexItem = {
-  id: string;              // ID REAL DA PASTA (TR007)
-  slug: string;            // slug amigável
-  title?: string;
-  description?: string;
-  ogImage: string;
-};
+    for (const folder of folders) {
+      const metaPath = path.join(basePath, folder, "meta.json");
+      if (!fs.existsSync(metaPath)) continue;
 
-let META_INDEX: Record<string, MetaIndexItem> | null = null;
+      const json = JSON.parse(fs.readFileSync(metaPath, "utf-8"));
+      const slug = String(json.slug || "").toLowerCase();
+      const id   = String(json.id || "").toLowerCase();
 
-function loadMetaIndex(): Record<string, MetaIndexItem> {
-  if (META_INDEX) return META_INDEX;
-
-  const index: Record<string, MetaIndexItem> = {};
-  const basePath = path.join(process.cwd(), "public/content/properties");
-
-  const folders = fs.readdirSync(basePath);
-
-  for (const folder of folders) {
-    const metaPath = path.join(basePath, folder, "meta.json");
-    if (!fs.existsSync(metaPath)) continue;
-
-    const meta = JSON.parse(fs.readFileSync(metaPath, "utf-8"));
-
-    const id = String(meta.id || folder).toUpperCase();
-    const slug = String(meta.slug || id).toLowerCase();
-
-    const imageFsPath = path.join(
-      basePath,
-      id,
-      "fotos",
-      "1.jpg"
-    );
-
-    const ogImage = fs.existsSync(imageFsPath)
-      ? `/content/properties/${id}/fotos/1.jpg`
-      : `/og-preview.jpg`;
-
-    const item: MetaIndexItem = {
-      id,
-      slug,
-      title: meta.title,
-      description: meta.description,
-      ogImage,
-    };
-
-    // 🔑 slug e id apontam para o MESMO item
-    index[id.toLowerCase()] = item;
-    index[slug.toLowerCase()] = item;
+      if (slug === needle || id === needle) {
+        return json;
+      }
+    }
+  } catch {
+    // nunca quebrar metadata
   }
-
-  META_INDEX = index;
-  return index;
+  return null;
 }
-
-
-/* =========================================================
-   HELPER
-========================================================= */
 
 function absoluteUrl(p: string, host: string) {
   if (/^https?:\/\//i.test(p)) return p;
@@ -83,16 +47,26 @@ function absoluteUrl(p: string, host: string) {
 }
 
 /* =========================================================
-   METADATA — SEO + WHATSAPP (ESTÁVEL)
+   METADATA (OG / WHATSAPP)
 ========================================================= */
-
 export async function generateMetadata(
   { params }: { params: { id: string } }
 ): Promise<Metadata> {
 
-  const key = params.id.toLowerCase();
-  const index = loadMetaIndex();
-  const meta = index[key];
+  const input = params.id;
+
+  const fsMeta = getMetaFromFilesystem(input);
+  const prop = fsMeta ? null : await getPropertyBySlugOrId(input).catch(() => null);
+
+  const title =
+    fsMeta?.title ||
+    prop?.titulo ||
+    "Imóvel | P-Link Imóveis";
+
+  const description =
+    fsMeta?.description ||
+    (Array.isArray(prop?.descricao) ? prop.descricao[0] : prop?.descricao) ||
+    "Imóveis comerciais, residenciais e industriais no Brasil.";
 
   const hdrs = headers();
   const host =
@@ -100,18 +74,30 @@ export async function generateMetadata(
     hdrs.get("host") ||
     "www.p-linkimoveis.com.br";
 
-  const canonicalId = meta?.slug || params.id;
+  const canonicalSlug = fsMeta?.slug || prop?.slug || input;
+  const url = absoluteUrl(`/imoveis/${canonicalSlug}`, host);
 
-  const url = `https://${host}/imoveis/${canonicalId}`;
+  const propertyId = fsMeta?.id || prop?.id || null;
 
-  const title =
-    meta?.title || "Imóvel | P-Link Imóveis";
+  let ogImage = absoluteUrl("/og-preview.jpg", host);
 
-  const description =
-    meta?.description ||
-    "Imóveis comerciais, residenciais e industriais no Brasil.";
+  if (propertyId) {
+    const ogPath = path.join(
+      process.cwd(),
+      "public",
+      "content",
+      "properties",
+      String(propertyId),
+      "og.jpg"
+    );
 
-  const ogImage = `https://${host}${meta?.ogImage || "/og-preview.jpg"}`;
+    if (fs.existsSync(ogPath)) {
+      ogImage = absoluteUrl(
+        `/content/properties/${propertyId}/og.jpg`,
+        host
+      );
+    }
+  }
 
   return {
     title,
@@ -137,45 +123,45 @@ export async function generateMetadata(
       description,
       images: [ogImage],
     },
+    robots: {
+      index: true,
+      follow: true,
+    },
   };
 }
 
-
 /* =========================================================
-   PÁGINA PRINCIPAL
+   PAGE
 ========================================================= */
-
 export default async function PropertyPage({ params }: { params: { id: string } }) {
   const prop = await getPropertyBySlugOrId(params.id).catch(() => null);
   if (!prop) notFound();
 
+  // 🔁 ID → SLUG
+  if (
+    params.id.toLowerCase() === String(prop.id).toLowerCase() &&
+    prop.slug &&
+    params.id !== prop.slug
+  ) {
+    redirect(`/imoveis/${prop.slug}`);
+  }
+
   const code = String(prop.id).toUpperCase();
-  const viewer3d =
-    prop.viewer3d?.length
-      ? prop.viewer3d
-      : getThreeDPageUrl(code);
+  const viewer3d = prop.viewer3d?.length
+    ? prop.viewer3d
+    : getThreeDPageUrl(code);
 
   const ll = normalizeLatLng(prop.geo);
-
   const all = await listProperties();
   const sims = all.filter(p => p.id !== prop.id).slice(0, 5);
 
   return (
-    <article className="space-y-6 pt-0 max-w-6xl mx-auto px-3">
+    <article className="space-y-6 max-w-6xl mx-auto px-3">
 
       <header className="space-y-2">
-        <div className="text-[11px] uppercase tracking-wider text-zinc-500">
-          Cód: {prop.id}
-        </div>
-
-        <h1 className="text-2xl md:text-3xl font-semibold">
-          {prop.titulo}
-        </h1>
-
-        <div className="text-sm text-zinc-600">
-          {prop.endereco}
-        </div>
-
+        <div className="text-xs uppercase text-zinc-500">Cód: {prop.id}</div>
+        <h1 className="text-2xl md:text-3xl font-semibold">{prop.titulo}</h1>
+        <div className="text-sm text-zinc-600">{prop.endereco}</div>
         <ShareButton />
       </header>
 
@@ -190,8 +176,7 @@ export default async function PropertyPage({ params }: { params: { id: string } 
             ? prop.descricao.map((t: string, i: number) => (
                 <p key={i} className="leading-relaxed">{t}</p>
               ))
-            : <p>{prop.descricao}</p>
-          }
+            : <p>{prop.descricao}</p>}
         </section>
       )}
 

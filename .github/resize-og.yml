@@ -1,0 +1,31 @@
+name: Resize OG Images
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  resize:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - run: npm ci
+
+      - run: node scripts/resize-og.js
+
+      - name: Commit resized images
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add public/content/properties/**/fotos/1.jpg
+          git commit -m "auto: resize OG images" || echo "nothing to commit"
+          git push
