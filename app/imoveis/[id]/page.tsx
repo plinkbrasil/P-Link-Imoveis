@@ -137,57 +137,10 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const prop = await getPropertyBySlugOrId(params.id).catch(() => null);
 
+
+  
   const title = prop ? buildTitle(prop) : "Imóvel | P-Link Imóveis";
-  const description = prop
-    ? buildDescription(prop)
-    : "Imóveis comerciais, residenciais e industriais na RMC.";
-
-  const hdrs = headers();
-  const host =
-    hdrs.get("x-forwarded-host") ||
-    hdrs.get("host") ||
-    "www.plinkimoveis.com.br";
-
-  const slugOrId = (prop as any)?.slug || params.id;
-  const url = absoluteUrl(`/imoveis/${slugOrId}`, host);
-
-  const firstPhoto = Array.isArray((prop as any)?.fotos)
-    ? String((prop as any)!.fotos[0] || "")
-    : "";
-  const isHttpUrl =
-    /^https?:\/\//i.test(firstPhoto) || firstPhoto.startsWith("/");
-  const ogImage = isHttpUrl
-    ? absoluteUrl(firstPhoto, host)
-    : absoluteUrl("/og/plink-default.jpg", host);
-
-  return {
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      type: "article",
-      url,
-      title,
-      description,
-      siteName: "P-Link Imóveis",
-      images: [{ url: ogImage }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [ogImage],
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
-  };
-}
-
-
-  const title = prop ? buildTitle(prop) : "Imóvel | P-Link Imóveis";
-  const description = prop ? buildDescription(prop) : "Imóveis comerciais, residenciais e industriais.";
+  const description = prop ? buildDescription(prop) : "Imóveis comerciais, residenciais e industriais na RMC.";
 
   const hdrs = headers();
   const host = hdrs.get("x-forwarded-host") || hdrs.get("host") || "www.plinkimoveis.com.br";
