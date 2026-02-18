@@ -25,24 +25,24 @@ export default function EventoPage() {
         {/* FOTO */}
         <div className="w-full overflow-hidden rounded-2xl">
           <img
-            src="/familia.png" // você troca aqui
-            alt="Família"
+            src="/thiago.png" // você troca aqui
+            alt="Thiago Viola"
             className="w-full h-auto object-cover"
           />
         </div>
 
         {/* TÍTULO */}
         <h1 className="text-3xl md:text-4xl font-bold">
-        A festa mais esperada de 2026!
+        Almoço de Aniversário do Thiago Viola!
         </h1>
 
         {/* DESCRIÇÃO */}
         <p className="text-white/80 text-sm md:text-base">
-          Uma data muito especial que estamos aguardando juntos com alegria ❤️
+        Prepare-se para uma comemoração especial com amigos no aniversário do Thiago Viola, que acontecerá no sábado, dia 28 de fevereiro, na Chácara Bobato, localizada no bairro Umbará em Curitiba/PR; o almoço e a música são por conta do anfitrião, mas não se esqueça de trazer sua própria bebida para brindar conosco!
         </p>
 
         {/* CRONÔMETRO */}
-        <Countdown targetDate="2026-02-14T00:00:00" />
+        <Countdown targetDate="2026-02-28T00:00:00" />
 
       </div>
     </main>
