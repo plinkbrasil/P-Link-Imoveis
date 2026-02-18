@@ -31,6 +31,9 @@ export default function EventoPage() {
           />
         </div>
 
+        {/* CRONÔMETRO */}
+        <Countdown targetDate="2026-02-28T00:00:00" />
+
         {/* TÍTULO */}
         <h1 className="text-3xl md:text-4xl font-bold">
         Almoço de Aniversário do Thiago Viola!
@@ -41,8 +44,15 @@ export default function EventoPage() {
         Prepare-se para uma comemoração especial com amigos no aniversário do Thiago Viola, que acontecerá no sábado, dia 28 de fevereiro, na Chácara Bobato, localizada no bairro Umbará em Curitiba/PR; o almoço e a música são por conta do anfitrião, mas não se esqueça de trazer sua própria bebida para brindar conosco!
         </p>
 
-        {/* CRONÔMETRO */}
-        <Countdown targetDate="2026-02-28T00:00:00" />
+        <a
+  href="https://www.google.com/maps/place/Cerâmica+Iguaçu+Ltda/@-25.6035699,-49.277776,382m/data=!3m1!1e3!4m6!3m5!1s0x94dcf9002d0ad2bd:0x4c16d86ab1f9b27c!8m2!3d-25.6029485!4d-49.2770098!16s%2Fg%2F11w_yg6q35?entry=ttu&g_ep=EgoyMDI2MDIxNi4wIKXMDSoASAFQAw%3D%3D"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex items-center justify-center mt-4 px-6 py-3 rounded-xl bg-emerald-600 text-white font-semibold text-sm hover:bg-emerald-700 transition"
+>
+  📍 Como chegar
+</a>
+
 
       </div>
     </main>
