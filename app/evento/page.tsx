@@ -41,7 +41,7 @@ export default function EventoPage() {
 
         {/* DESCRIÇÃO */}
         <p className="text-white/80 text-sm md:text-base">
-        Prepare-se para uma comemoração especial com amigos no aniversário do Thiago Viola, que acontecerá no sábado, dia 28 de fevereiro, na Chácara Bobato, localizada no bairro Umbará em Curitiba/PR; o almoço e a música são por conta do anfitrião, mas não se esqueça de trazer sua própria bebida para brindar conosco!
+        O aniversário do Thiago Viola será no sábado, dia 28 de fevereiro, na Chácara Bobato (Umbará, Curitiba), com almoço e música garantidos pelo anfitrião, ficando apenas a bebida por conta de cada convidado.
         </p>
 
         <a
