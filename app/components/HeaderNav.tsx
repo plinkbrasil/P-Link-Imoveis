@@ -6,7 +6,7 @@ export default function HeaderNav() {
   const pathname = usePathname();
 
   const hideMap =
-    pathname === "/evento" || pathname.startsWith("/evento/");
+    pathname === "/aniversario_thiago_viola" || pathname.startsWith("/aniversario_thiago_viola/");
 
   return (
     <>
