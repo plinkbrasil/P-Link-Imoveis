@@ -1,10 +1,28 @@
 import Countdown from '@/app/components/Countdown';
+import type { Metadata } from "next";
 
-export const metadata = {
-  title: 'Evento',
-  robots: {
-    index: false,
-    follow: false,
+export const metadata: Metadata = {
+  title: "Aniversário do Thiago Viola | P-Link",
+  description: "Descrição curta do evento para quem receber o link no WhatsApp.",
+  openGraph: {
+    title: "Aniversário do Thiago Viola",
+    description: "Descrição curta do evento para quem receber o link no WhatsApp.",
+    url: "https://www.p-linkimoveis.com.br/aniversario_thiago_viola",
+    siteName: "P-Link Imóveis",
+    images: [
+      {
+        url: "https://www.p-linkimoveis.com.br/og/thiago_viola.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Aniversário do Thiago Viola",
+    description: "O aniversário do Thiago Viola será no sábado, dia 28 de fevereiro, na Chácara Bobato (Umbará, Curitiba), com almoço e música garantidos pelo anfitrião, ficando apenas a bebida por conta de cada convidado.",
+    images: ["https://www.p-linkimoveis.com.br/og/evento-og.png"],
   },
 };
 
