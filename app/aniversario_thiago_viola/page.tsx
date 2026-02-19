@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     siteName: "P-Link Imóveis",
     images: [
       {
-        url: "https://www.p-linkimoveis.com.br/og/thiago-og.png",
+        url: "https://www.p-linkimoveis.com.br/thiago-og.png",
         width: 1200,
         height: 630,
       },
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Aniversário do Thiago Viola",
     description: "O aniversário do Thiago Viola será no sábado, dia 28 de fevereiro, na Chácara Bobato (Umbará, Curitiba), com almoço e música garantidos pelo anfitrião, ficando apenas a bebida por conta de cada convidado.",
-    images: ["https://www.p-linkimoveis.com.br/og/thiago-og.png"],
+    images: ["https://www.p-linkimoveis.com.br/thiago-og.png"],
   },
 };
 
