@@ -8,6 +8,8 @@ import HeaderSizer from "@/app/components/HeaderSizer";
 import WhatsAppFloat from "@/app/components/WhatsAppFloat";
 import { listProperties } from "@/lib/properties";
 import { FaInstagram } from "react-icons/fa";
+import HeaderNav from "@/app/components/HeaderNav";
+import { usePathname } from "next/navigation";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.p-linkimoveis.com.br"),
@@ -82,10 +84,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <header className="sticky top-0 z-[2000] bg-gradient-to-r from-[#0c0f14]/90 to-[#0a454f]/90 backdrop-blur-sm">
           <HeaderSizer />
           <div className="mx-auto max-w-6xl px-4 py-3 grid grid-cols-3 items-center">
-            <nav className="justify-self-start flex gap-4 sm:gap-6 text-xs sm:text-sm font-semibold uppercase tracking-wide">
-              <a href="/" className="text-white hover:text-white/90">Home</a>
-              <a href="/mapa" className="text-white hover:text-white/90">Mapa</a>
-            </nav>
+          <nav className="justify-self-start flex gap-4 sm:gap-6 text-xs sm:text-sm font-semibold uppercase tracking-wide">
+  <HeaderNav />
+</nav>
+
 
             {/* LOGO */}
             <a
