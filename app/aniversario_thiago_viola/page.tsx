@@ -3,10 +3,10 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Aniversário do Thiago Viola | P-Link",
-  description: "Descrição curta do evento para quem receber o link no WhatsApp.",
+  description: "Traga seus talheres, pratos e sua bebida",
   openGraph: {
     title: "Aniversário do Thiago Viola",
-    description: "Descrição curta do evento para quem receber o link no WhatsApp.",
+    description: "Traga seus talheres, pratos e sua bebida",
     url: "https://www.p-linkimoveis.com.br/aniversario_thiago_viola",
     siteName: "P-Link Imóveis",
     images: [
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Aniversário do Thiago Viola",
-    description: "O aniversário do Thiago Viola será no sábado, dia 28 de fevereiro, na Chácara Bobato (Umbará, Curitiba), com almoço e música garantidos pelo anfitrião, ficando apenas a bebida por conta de cada convidado.",
+    description: "Traga seus talheres, pratos e sua bebida",
     images: ["https://www.p-linkimoveis.com.br/thiago-og.png"],
   },
 };
