@@ -2,7 +2,7 @@ import Countdown from '@/app/components/Countdown';
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Aniversário do Thiago Viola | P-Link",
+  title: "Aniversário do Thiago Viola",
   description: "Traga seus talheres, pratos e sua bebida",
   openGraph: {
     title: "Aniversário do Thiago Viola",
