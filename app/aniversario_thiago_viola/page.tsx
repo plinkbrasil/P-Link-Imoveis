@@ -12,8 +12,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "https://www.p-linkimoveis.com.br/thiagoog.jpg",
-        width: 1920,
-        height: 1080,
+        width: 1200,
+        height: 630,
       },
     ],
     type: "website",
