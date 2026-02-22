@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     siteName: "P-Link Imóveis",
     images: [
       {
-        url: "https://www.p-linkimoveis.com.br/thiagoog.png",
+        url: "https://www.p-linkimoveis.com.br/thiagoog.jpg",
         width: 1200,
         height: 630,
       },
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Aniversário do Thiago Viola",
     description: "Traga seus talheres, pratos e sua bebida",
-    images: ["https://www.p-linkimoveis.com.br/thiagoog.png"],
+    images: ["https://www.p-linkimoveis.com.br/thiagoog.jpg"],
   },
 };
 
