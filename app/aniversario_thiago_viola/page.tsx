@@ -52,7 +52,7 @@ export default function EventoPage() {
         </div>
 
         {/* CRONÔMETRO */}
-        <Countdown targetDate="2026-02-28T00:00:00" />
+        <Countdown targetDate="2026-02-28T11:00:00" />
 
         {/* TÍTULO */}
         <h1 className="text-3xl md:text-4xl font-bold">
