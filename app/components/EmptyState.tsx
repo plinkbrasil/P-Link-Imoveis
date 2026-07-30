@@ -2,7 +2,7 @@
 import React from "react";
 
 function whatsappHref(msg: string) {
-  const num = "5541987098082"; // E.164 sem '+'
+  const num = "5541996765118"; // E.164 sem '+'
   const text = encodeURIComponent(msg);
   return `https://wa.me/${num}?text=${text}`;
 }

@@ -49,7 +49,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     "url": "https://www.p-linkimoveis.com.br/",
     "logo": "https://www.p-linkimoveis.com.br/logo.svg",
     "sameAs": ["https://www.instagram.com/paulo.stephens"],
-    "telephone": "+55 41 98709-8082",
+    "telephone": "+55 41 99676-5118",
     "areaServed": {
       "@type": "Country",
       "name": "Brasil"
@@ -123,7 +123,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
         <main>{children}</main>
 
-        <WhatsAppFloat phoneE164="+5541987098082" message="Olá! Vim pelo site P-Link Imóveis." />
+        <WhatsAppFloat phoneE164="+5541996765118" message="Olá! Vim pelo site P-Link Imóveis." />
 
         <footer className="border-t border-brand-200">
           <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-zinc-600">

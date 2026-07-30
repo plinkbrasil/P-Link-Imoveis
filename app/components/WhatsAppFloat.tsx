@@ -2,7 +2,7 @@
 'use client';
 
 type Props = {
-  /** Phone in E.164 format, e.g. +5541987098082 */
+  /** Phone in E.164 format, e.g. +5541996765118 */
   phoneE164: string;
   /** Optional prefilled message */
   message?: string;
